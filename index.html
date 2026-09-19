@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rocky Delivery | Pedidos Online</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Global Banner -->
+    <div id="global-banner" style="display: none; background-color: var(--primary); color: white; text-align: center; padding: 10px; font-size: 0.9rem; font-weight: 600;">
+        <span id="global-banner-text"></span>
+    </div>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-logo">
+            <i data-lucide="zap"></i> Rocky
+        </div>
+        <p style="color: var(--text-muted); margin-top: 10px; font-weight: 600;">Cargando tus antojos...</p>
+    </div>
+
+    <!-- Biometric Lock Screen -->
+    <div id="app-lock-screen" style="display: none; position: fixed; inset: 0; background: var(--bg-color); z-index: 100000; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <i data-lucide="fingerprint" style="width: 64px; height: 64px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2>App Bloqueada</h2>
+        <p style="color: var(--text-muted); margin: 10px 0 30px;">Usa tu huella o FaceID para entrar</p>
+        <button class="checkout-btn" onclick="unlockAppWithBiometrics()" style="width: 200px;">Desbloquear</button>
+        <button class="checkout-btn" onclick="forceLogout()" style="width: 200px; background: transparent; color: var(--text-muted); margin-top: 10px;">Cerrar Sesión</button>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="brand">
+            <i data-lucide="zap" fill="currentColor"></i> Rocky
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button style="background:none;border:none;cursor:pointer;color:var(--text-main);">
+                <i data-lucide="search"></i>
+            </button>
+            <button style="background:none;border:none;cursor:pointer;color:var(--text-main);" onclick="openAuthModal()">
+                <i data-lucide="user"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-banner">
+        <div class="hero-content">
+            <h1>Los mejores sabores,<br>directo a tu puerta.</h1>
+            <p>Comida rápida premium, calientita y rápida en Bahía Blanca.</p>
+            <button class="hero-btn" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">
+                Ver Menú
+            </button>
+        </div>
+    </section>
+
+    <!-- Active Orders Tracker -->
+    <div id="active-orders-container" style="display: none; padding: 20px; background: var(--surface); margin-bottom: -15px; position: relative; z-index: 2; border-bottom: 1px solid var(--border-color);">
+        <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="clock" style="color: var(--primary);"></i> Tus pedidos activos
+        </h3>
+        <div id="active-orders-list">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Categories Carousel -->
+    <div class="categories-container">
+        <div class="categories" id="categories-list">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <div id="catalog-container">
+            <!-- Rendered by JS -->
+        </div>
+    </main>
+
+    <!-- Floating Cart -->
+    <div id="floating-cart" onclick="toggleCart()">
+        <div class="cart-info">
+            <div class="cart-icon-wrapper">
+                <i data-lucide="shopping-bag"></i>
+                <span class="cart-badge" id="cart-badge">0</span>
+            </div>
+            <span class="cart-total" id="cart-total-floating">$0</span>
+        </div>
+        <div class="cart-action">Ver Pedido</div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal-overlay" id="cart-modal-overlay">
+        <div class="cart-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">Tu Pedido</div>
+                <button class="close-modal" onclick="toggleCart()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="cart-items-container" id="cart-items">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="modal-footer">
+                <textarea id="cart-notes" placeholder="Notas para la cocina (Ej: Sin cebolla, extra mayonesa)" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); resize: vertical; min-height: 60px; font-family: inherit; font-size: 0.9rem;"></textarea>
+                <div id="address-selector-container" style="display: none; margin-bottom: 15px; text-align: left;">
+                    <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 8px;">Enviar a:</div>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; margin-bottom: 5px;">
+                        <input type="radio" name="shipping-address" id="radio-addr1" value="1" checked onchange="updateShippingCost()">
+                        <span id="label-addr1">Dirección 1</span>
+                    </label>
+                    <label id="container-addr2" style="display: none; align-items: center; gap: 8px; font-size: 0.9rem;">
+                        <input type="radio" name="shipping-address" id="radio-addr2" value="2" onchange="updateShippingCost()">
+                        <span id="label-addr2">Dirección 2</span>
+                    </label>
+                </div>
+                <div class="checkout-row">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal">$0</span>
+                </div>
+                <div class="checkout-row">
+                    <span>Envío <span id="shipping-distance" style="font-size:0.75rem; color:var(--text-muted);"></span></span>
+                    <span id="cart-shipping">$500</span>
+                </div>
+                <div class="checkout-row total">
+                    <span>Total</span>
+                    <span id="cart-final-total">$0</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">Confirmar Pedido</button>
+            </div>
+        </div>
+    </div>
+    <!-- Extras Modal -->
+    <div class="modal-overlay" id="extras-modal-overlay">
+        <div class="cart-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" id="extras-modal-title">Personaliza tu pedido</div>
+                <button class="close-modal" onclick="closeExtrasModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="cart-items-container" id="extras-container" style="padding: 10px 0;">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="checkout-btn" onclick="confirmExtrasAndAdd()">Agregar al Carrito</button>
+            </div>
+        </div>
+    </div>
+    <!-- Auth Modal (Login / Register) -->
+    <div class="modal-overlay" id="auth-modal-overlay">
+        <div class="cart-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" id="auth-modal-title">Iniciar Sesión</div>
+                <button class="close-modal" onclick="closeAuthModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-footer" style="padding: 20px;">
+                <div id="auth-view-login">
+                    <div class="auth-input-group">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="auth-email" placeholder="Correo Electrónico">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="auth-password" placeholder="Contraseña">
+                    </div>
+                    <button class="checkout-btn" onclick="handleAuthSubmit('login')" style="margin-bottom: 10px;">Entrar</button>
+                    <button class="checkout-btn" id="btn-biometric-login" onclick="handleBiometricLogin()" style="background: var(--text-main); display: none; margin-bottom: 10px;"><i data-lucide="fingerprint" style="width:18px; margin-right:8px;"></i> Entrar con Huella</button>
+                    
+                    <div class="auth-links">
+                        <span onclick="toggleAuthMode('forgot')">¿Olvidaste tu contraseña?</span>
+                        <span onclick="toggleAuthMode('register')">¿No tienes cuenta? Regístrate</span>
+                    </div>
+                </div>
+                
+                <div id="auth-view-register" style="display: none;">
+                    <div class="auth-input-group">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="reg-name" placeholder="Nombre Completo">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="map-pin"></i>
+                        <input type="text" id="reg-address" placeholder="Dirección Principal (Ej. Zapiola 450)">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="map-pin"></i>
+                        <input type="text" id="reg-address2" placeholder="Dirección 2 (Opcional)">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="phone"></i>
+                        <input type="tel" id="reg-phone" placeholder="Teléfono / WhatsApp (Ej. 2914123456)">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="reg-email" placeholder="Correo Electrónico">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="reg-password" placeholder="Contraseña">
+                    </div>
+                    <button class="checkout-btn" onclick="handleAuthSubmit('register')" style="margin-bottom: 10px;">Crear Cuenta</button>
+                    
+                    <div class="auth-links">
+                        <span onclick="toggleAuthMode('login')">¿Ya tienes cuenta? Entra</span>
+                    </div>
+                </div>
+
+                <div id="auth-view-forgot" style="display: none;">
+                    <p style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:15px;">Te enviaremos un correo con las instrucciones para recuperar tu contraseña.</p>
+                    <div class="auth-input-group">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="forgot-email" placeholder="Correo Electrónico">
+                    </div>
+                    <button class="checkout-btn" onclick="handleForgotPassword()" style="margin-bottom: 10px;">Recuperar Contraseña</button>
+                    
+                    <div class="auth-links">
+                        <span onclick="toggleAuthMode('login')"><i data-lucide="arrow-left" style="width:14px; margin-right:4px;"></i> Volver a Iniciar Sesión</span>
+                    </div>
+                </div>
+                
+                <div id="auth-view-profile" style="display: none; text-align: center;">
+                    <i data-lucide="user-check" style="width: 48px; height: 48px; color: var(--primary); margin-bottom: 10px;"></i>
+                    <h3 id="profile-name">Hola</h3>
+                    <p id="profile-address" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Dirección</p>
+                    
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Mis Pedidos Activos</h4>
+                        <div id="my-orders-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                            <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin: 10px 0;">No tienes pedidos recientes.</p>
+                        </div>
+                    </div>
+                    
+                    <button class="checkout-btn" onclick="toggleAuthMode('edit-profile')" style="background: var(--primary); margin-bottom: 10px;"><i data-lucide="edit-3" style="width:16px;"></i> Editar Datos</button>
+                    <button class="checkout-btn" id="btn-setup-biometric" onclick="setupBiometric()" style="background: #212529; margin-bottom: 10px;"><i data-lucide="fingerprint" style="width:16px;"></i> Activar Login con Huella</button>
+                    <button class="checkout-btn" onclick="logout()" style="background: var(--text-muted);">Cerrar Sesión</button>
+                </div>
+
+                <div id="auth-view-edit-profile" style="display: none; text-align: left;">
+                    <h4 style="margin-bottom: 15px; text-align: center;">Editar Datos</h4>
+                    <div class="auth-input-group">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="edit-name" placeholder="Nombre Completo">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="phone"></i>
+                        <input type="tel" id="edit-phone" placeholder="Teléfono / WhatsApp">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="map-pin"></i>
+                        <input type="text" id="edit-address" placeholder="Dirección 1 (Ej. Zapiola 450)">
+                    </div>
+                    <div class="auth-input-group">
+                        <i data-lucide="map-pin"></i>
+                        <input type="text" id="edit-address2" placeholder="Dirección 2 (Opcional)">
+                    </div>
+                    <button class="checkout-btn" onclick="saveProfileChanges()" style="margin-bottom: 10px;">Guardar Cambios</button>
+                    <div class="auth-links" style="text-align: center;">
+                        <span onclick="toggleAuthMode('profile')"><i data-lucide="arrow-left" style="width:14px; margin-right:4px;"></i> Volver al Perfil</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="payment-modal-overlay">
+        <div class="cart-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">Pago por Transferencia</div>
+                <button class="close-modal" onclick="closePaymentModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-footer" style="padding: 20px;">
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Transfiere el total a la siguiente cuenta y adjunta el comprobante (Imagen o PDF) para confirmar el pedido.</p>
+                
+                <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Alias / CBU</div>
+                    <div id="payment-alias-display" style="font-size: 1.2rem; font-weight: 800; color: var(--primary); user-select: all;">CARGANDO...</div>
+                </div>
+                
+                <div class="auth-input-group" style="border: 2px dashed var(--border-color); padding: 20px; text-align: center; border-radius: 8px; background: #fafafa; cursor: pointer;" onclick="document.getElementById('payment-file').click()">
+                    <i data-lucide="upload-cloud" style="width: 32px; height: 32px; color: var(--primary); margin: 0 auto 10px auto; display: block;"></i>
+                    <div id="payment-file-name" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Toca aquí para seleccionar tu comprobante</div>
+                    <input type="file" id="payment-file" accept="image/*,application/pdf" style="display: none;" onchange="handleFileSelect(event)">
+                </div>
+                
+                <button id="btn-confirm-payment" class="checkout-btn" onclick="uploadReceiptAndConfirm()" style="margin-top: 20px; opacity: 0.5; pointer-events: none;">
+                    Enviar Comprobante y Finalizar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/* Estilos específicos para impresión de Tickera */
+@media print {
+    /* Ocultar todo lo que no sea el área del ticket */
+    body * {
+        visibility: hidden;
+    }
+    
+    #ticket-print-area, #ticket-print-area * {
+        visibility: visible;
+    }
+    
+    #ticket-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: block !important;
+    }
+
+    /* Configuración de página para ticket térmico (ajustable a 80mm o 58mm) */
+    @page {
+        margin: 0;
+        /* Width 80mm es estándar, para 58mm usar width: 58mm */
+        size: 80mm auto; 
+    }
+
+    /* Estilos del Ticket */
+    .ticket {
+        width: 72mm; /* Dejar un margen de seguridad */
+        margin: 0 auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 12px;
+        line-height: 1.2;
+        color: #000;
+        background: #fff;
+    }
+
+    .ticket-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .ticket-brand {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0 0 5px 0;
+        text-transform: uppercase;
+    }
+
+    .ticket-header p {
+        margin: 2px 0;
+        font-size: 11px;
+    }
+
+    .ticket-divider {
+        border-top: 1px dashed #000;
+        margin: 8px 0;
+    }
+
+    .ticket-info p {
+        margin: 3px 0;
+    }
+
+    .ticket-items {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+
+    .ticket-items th {
+        text-align: left;
+        border-bottom: 1px dashed #000;
+        padding-bottom: 4px;
+        margin-bottom: 4px;
+    }
+
+    .ticket-items td {
+        padding: 4px 0;
+        vertical-align: top;
+    }
+
+    .qty { width: 15%; text-align: center; }
+    .desc { width: 55%; padding-right: 5px; }
+    .price { width: 30%; text-align: right; }
+
+    .ticket-totals {
+        margin-top: 10px;
+    }
+
+    .ticket-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+    }
+
+    .ticket-row.total {
+        font-weight: bold;
+        font-size: 14px;
+        margin-top: 8px;
+        border-top: 1px dashed #000;
+        padding-top: 8px;
+    }
+
+    .ticket-footer {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 10px;
+    }
+}

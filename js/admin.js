@@ -343,20 +343,34 @@ function closeOrderModal() { document.getElementById('order-modal-overlay').clas
 // --- CATALOG MANAGER LOGIC ---
 let adminCatalog = [];
 
-function loadCatalogManager() {
-    const saved = localStorage.getItem('rocky_catalog');
-    if (saved) {
-        adminCatalog = JSON.parse(saved);
+async function loadCatalogManager() {
+    if (typeof db !== 'undefined') {
+        try {
+            const doc = await db.collection('settings').doc('catalog').get();
+            if (doc.exists) {
+                adminCatalog = doc.data().items || [];
+            } else {
+                adminCatalog = []; 
+            }
+        } catch (e) {
+            console.error("Error loading catalog:", e);
+            adminCatalog = [];
+        }
     } else {
-        // Fallback en caso de que app.js aún no haya inicializado (no debería pasar si entran primero al cliente)
-        adminCatalog = []; 
+        adminCatalog = [];
     }
     renderCatalogManager();
 }
 
-function saveCatalogManager() {
-    localStorage.setItem('rocky_catalog', JSON.stringify(adminCatalog));
-    renderCatalogManager();
+async function saveCatalogManager() {
+    try {
+        await db.collection('settings').doc('catalog').set({ items: adminCatalog });
+        renderCatalogManager();
+        showToast("Catálogo guardado en la nube.");
+    } catch (e) {
+        console.error("Error al guardar catálogo", e);
+        alert("Error al guardar catálogo. Asegúrate de iniciar sesión como usuario.");
+    }
 }
 
 function switchTab(tabId) {

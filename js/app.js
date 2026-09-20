@@ -54,13 +54,22 @@ const defaultCatalog = [
 
 let catalog = [];
 
-function loadCatalog() {
-    const saved = localStorage.getItem('rocky_catalog');
-    if (saved) {
-        catalog = JSON.parse(saved);
+async function loadCatalog() {
+    if (typeof db !== 'undefined') {
+        try {
+            const doc = await db.collection('settings').doc('catalog').get();
+            if (doc.exists) {
+                catalog = doc.data().items || [];
+            } else {
+                catalog = defaultCatalog;
+                await db.collection('settings').doc('catalog').set({ items: catalog });
+            }
+        } catch (e) {
+            console.error("Error loading catalog from Firestore:", e);
+            catalog = defaultCatalog;
+        }
     } else {
         catalog = defaultCatalog;
-        localStorage.setItem('rocky_catalog', JSON.stringify(catalog));
     }
 }
 
@@ -105,8 +114,8 @@ async function loadGlobalSettings() {
 }
 
 // Inicialización
-document.addEventListener('DOMContentLoaded', () => {
-    loadCatalog();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadCatalog();
     loadGlobalSettings();
     
     // Biometric App Lock Check

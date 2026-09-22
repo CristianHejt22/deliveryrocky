@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rocky Delivery | Admin Panel</title>
+    <title>Punto Milanga | Admin Panel</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,14 +12,14 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary: #FF3344;
-            --bg-color: #F4F5F7;
-            --surface: #FFFFFF;
-            --text-main: #172B4D;
-            --text-muted: #5E6C84;
-            --border-color: #DFE1E6;
+            --primary: #FCBA04;
+            --bg-color: #0E223C;
+            --surface: #153051;
+            --text-main: #FFFFFF;
+            --text-muted: #A0B0C0;
+            --border-color: #2A4365;
             --radius: 8px;
-            --shadow-sm: 0 1px 2px rgba(9, 30, 66, 0.25);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -309,7 +309,7 @@
 </head>
 <body>
     <header>
-        <div class="brand"><i data-lucide="zap" fill="currentColor"></i> Rocky Admin</div>
+        <div class="brand"><img src="img/logo.png" alt="Punto Milanga" style="height: 32px;"> Punto Milanga Admin</div>
         <div class="tabs" style="display:flex; align-items:center; gap: 20px;">
             <button id="notify-toggle-btn" class="btn-icon" onclick="requestNotificationPermission()" title="Activar Notificaciones de Escritorio" style="font-size: 1rem;">
                 <i data-lucide="app-window" id="notify-icon"></i>

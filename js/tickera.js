@@ -31,8 +31,7 @@ function printTicket(orderId) {
     const ticketHtml = `
         <div class="ticket">
             <div class="ticket-header" style="text-align: center;">
-                <img src="img/logo.png" alt="Punto Milanga" style="max-width: 180px; height: auto; filter: grayscale(100%); margin: 0 auto 10px; display: block;">
-                <h1 class="ticket-brand" style="margin-bottom: 5px;">PUNTO MILANGA</h1>
+                <img src="img/logo.png" alt="Punto Milanga" style="max-width: 180px; height: auto; filter: grayscale(100%) brightness(60%) contrast(120%); margin: 0 auto 10px; display: block;">
                 <p>Bahía Blanca</p>
                 <p>Tel: (291) 400-0000</p>
                 <div class="ticket-divider"></div>

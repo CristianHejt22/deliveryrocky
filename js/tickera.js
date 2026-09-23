@@ -88,6 +88,16 @@ function printTicket(orderId) {
 
     printArea.innerHTML = ticketHtml;
 
-    // Disparar diálogo de impresión
-    window.print();
+    // Wait for logo image to load before triggering print dialog
+    const logoImg = printArea.querySelector('img');
+    if (logoImg) {
+        logoImg.onload = () => {
+            window.print();
+        };
+        logoImg.onerror = () => {
+            window.print();
+        };
+    } else {
+        window.print();
+    }
 }

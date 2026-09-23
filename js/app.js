@@ -982,7 +982,7 @@ async function setupBiometric() {
         const credential = await navigator.credentials.create({
             publicKey: {
                 challenge,
-                rp: { name: "Rocky Delivery", id: window.location.hostname },
+                rp: { name: "Punto Milanga", id: window.location.hostname },
                 user: {
                     id: userId,
                     name: currentUser.email,

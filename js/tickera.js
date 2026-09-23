@@ -30,8 +30,9 @@ function printTicket(orderId) {
 
     const ticketHtml = `
         <div class="ticket">
-            <div class="ticket-header">
-                <h1 class="ticket-brand">ROCKY DELIVERY</h1>
+            <div class="ticket-header" style="text-align: center;">
+                <img src="img/logo.png" alt="Punto Milanga" style="max-width: 180px; height: auto; filter: grayscale(100%); margin: 0 auto 10px; display: block;">
+                <h1 class="ticket-brand" style="margin-bottom: 5px;">PUNTO MILANGA</h1>
                 <p>Bahía Blanca</p>
                 <p>Tel: (291) 400-0000</p>
                 <div class="ticket-divider"></div>
@@ -79,7 +80,7 @@ function printTicket(orderId) {
             </div>
             
             <div class="ticket-footer">
-                <p>¡Gracias por elegir a Rocky!</p>
+                <p>¡Gracias por elegir a Punto Milanga!</p>
                 <p>--</p>
             </div>
         </div>

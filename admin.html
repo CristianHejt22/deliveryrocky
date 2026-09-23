@@ -86,7 +86,7 @@
         }
 
         .column {
-            background: #EBECF0;
+            background: #1C3B5E;
             border-radius: var(--radius);
             width: 320px;
             min-width: 320px;
@@ -110,7 +110,7 @@
         .col-done { border-bottom-color: #5E6C84; }
 
         .badge {
-            background: rgba(9,30,66,0.08);
+            background: rgba(255,255,255,0.15);
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -157,8 +157,8 @@
         .order-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
 
         .btn { border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-        .btn-print { background: #DFE1E6; color: var(--text-main); }
-        .btn-print:hover { background: #C1C7D0; }
+        .btn-print { background: #2A4365; color: var(--text-main); }
+        .btn-print:hover { background: #375375; }
         .btn-next { background: var(--primary); color: white; }
         .btn-next:hover { background: #E62A39; }
         .btn-danger { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
@@ -420,8 +420,8 @@
         <div class="cat-section">
             <h3 class="cat-title"><i data-lucide="credit-card" style="display:inline; width:20px; vertical-align:-3px; margin-right:5px;"></i> Datos de Pago (Transferencia)</h3>
             <div class="form-group" style="margin-top:15px;">
-                <label class="form-label">Alias / CBU / CVU</label>
-                <input type="text" id="set-payment-alias" class="form-control" placeholder="Ej: ROCKY.DELIVERY.MP">
+                <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Alias / CBU / CVU para transferencia</label>
+                <input type="text" id="set-payment-alias" class="form-control" placeholder="Ej: PUNTOMILANGA.MP">
             </div>
         </div>
 

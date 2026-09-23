@@ -846,7 +846,8 @@ main {
   transform: translateY(-2px);
 }
 
-.extra-card-label input[type="checkbox"] {
+.extra-card-label input[type="checkbox"],
+.extra-card-label input[type="radio"] {
   display: none;
 }
 
@@ -909,21 +910,25 @@ main {
   z-index: 2;
 }
 
-.extra-card-label input[type="checkbox"]:checked ~ .extra-card-check {
+.extra-card-label input[type="checkbox"]:checked ~ .extra-card-check,
+.extra-card-label input[type="radio"]:checked ~ .extra-card-check {
   background: var(--primary);
   border-color: var(--primary);
   color: white;
 }
 
-.extra-card-label input[type="checkbox"]:checked ~ .extra-card-info .extra-card-name {
+.extra-card-label input[type="checkbox"]:checked ~ .extra-card-info .extra-card-name,
+.extra-card-label input[type="radio"]:checked ~ .extra-card-info .extra-card-name {
   color: var(--primary);
 }
 
-.extra-card-label input[type="checkbox"]:checked ~ .extra-card-info .extra-card-price {
+.extra-card-label input[type="checkbox"]:checked ~ .extra-card-info .extra-card-price,
+.extra-card-label input[type="radio"]:checked ~ .extra-card-info .extra-card-price {
   color: var(--primary);
 }
 
-.extra-card-label:has(input[type="checkbox"]:checked) {
+.extra-card-label:has(input[type="checkbox"]:checked),
+.extra-card-label:has(input[type="radio"]:checked) {
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
 }

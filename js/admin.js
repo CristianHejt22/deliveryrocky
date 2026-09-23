@@ -512,7 +512,7 @@ function saveCategory() {
     closeCategoryModal();
 }
 
-// -- Extras Modal --
+// -- Options Modal --
 let currentExtraCatIndex = null;
 let currentExtraItemIndex = null;
 
@@ -521,9 +521,21 @@ function openExtrasModalManager(catIndex, itemIndex) {
     currentExtraItemIndex = itemIndex;
     
     const item = adminCatalog[catIndex].items[itemIndex];
-    if (!item.extras) item.extras = [];
+    // Migrate old extras to optionGroups if needed
+    if (item.extras && item.extras.length > 0 && !item.optionGroups) {
+        item.optionGroups = [{
+            id: 'g_' + Date.now(),
+            name: 'Extras / Adicionales',
+            type: 'checkbox',
+            options: item.extras
+        }];
+        delete item.extras;
+        saveCatalogManager();
+    }
     
-    renderExtrasList();
+    if (!item.optionGroups) item.optionGroups = [];
+    
+    renderOptionGroupsList();
     document.getElementById('extras-modal-overlay').classList.add('active');
 }
 
@@ -531,24 +543,45 @@ function closeExtrasModal() {
     document.getElementById('extras-modal-overlay').classList.remove('active');
 }
 
-function renderExtrasList() {
+function renderOptionGroupsList() {
     const container = document.getElementById('extras-list-container');
     const item = adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex];
     
-    if (!item.extras || item.extras.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">No hay extras configurados para este producto.</p>';
+    if (!item.optionGroups || item.optionGroups.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">No hay grupos de opciones para este producto.</p>';
         return;
     }
 
-    let html = item.extras.map((ex, exIdx) => {
-        let imgHtml = ex.image ? `<img src="${ex.image}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 10px;">` : '';
+    let html = item.optionGroups.map((group, gIdx) => {
+        let optionsHtml = group.options.map((opt, oIdx) => {
+            let imgHtml = opt.image ? `<img src="${opt.image}" style="width: 30px; height: 30px; border-radius: 4px; object-fit: cover; margin-right: 10px;">` : '';
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; font-size: 0.85rem;">
+                        ${imgHtml}
+                        <span>${opt.name}</span> <span style="color:var(--primary); margin-left:10px;">+${formatPrice(opt.price)}</span>
+                    </div>
+                    <button class="btn-icon" style="color: #FF5630; padding: 2px;" onclick="deleteOption(${gIdx}, ${oIdx})"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
+                </div>
+            `;
+        }).join('');
+
         return `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center;">
-                ${imgHtml}
-                <div><strong>${ex.name}</strong> <span style="color:var(--primary); margin-left:10px;">+${formatPrice(ex.price)}</span></div>
+        <div style="background: var(--surface); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h5 style="margin:0;">${group.name} <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">(${group.type === 'radio' ? 'Única' : 'Múltiple'})</span></h5>
+                <button class="btn-icon" style="color: #FF5630; padding: 4px;" onclick="deleteOptionGroup(${gIdx})"><i data-lucide="trash-2" style="width:16px;"></i></button>
             </div>
-            <button class="btn-icon" style="color: #FF5630;" onclick="deleteExtra(${exIdx})"><i data-lucide="trash-2" style="width:16px;"></i></button>
+            <div style="margin-bottom: 15px;">
+                ${optionsHtml || '<div style="font-size:0.8rem; color:var(--text-muted);">Sin opciones configuradas</div>'}
+            </div>
+            
+            <div style="display: flex; gap: 8px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px;">
+                <input type="text" id="new-opt-name-${gIdx}" class="form-control" placeholder="Nombre opción" style="font-size: 0.8rem;">
+                <input type="number" id="new-opt-price-${gIdx}" class="form-control" placeholder="$" style="width: 70px; font-size: 0.8rem;" value="0">
+                <input type="url" id="new-opt-img-${gIdx}" class="form-control" placeholder="URL Img (Opcional)" style="width: 100px; font-size: 0.8rem;">
+                <button type="button" class="btn btn-next" style="padding: 4px 8px; font-size:0.8rem;" onclick="addOptionToGroup(${gIdx})">Añadir</button>
+            </div>
         </div>
     `}).join('');
     
@@ -556,37 +589,57 @@ function renderExtrasList() {
     lucide.createIcons();
 }
 
-function addExtra() {
-    const nameInput = document.getElementById('new-extra-name');
-    const priceInput = document.getElementById('new-extra-price');
-    const imageInput = document.getElementById('new-extra-image');
+function addOptionGroup() {
+    const nameInput = document.getElementById('new-group-name');
+    const typeSelect = document.getElementById('new-group-type');
     
-    if (!nameInput.value || !priceInput.value) return alert("Completa el nombre y el precio");
+    if (!nameInput.value) return alert("Escribe un nombre para el grupo");
 
-    const newExtra = {
-        id: 'e' + Date.now(),
+    adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex].optionGroups.push({
+        id: 'g_' + Date.now(),
+        name: nameInput.value,
+        type: typeSelect.value,
+        options: []
+    });
+    
+    nameInput.value = '';
+    saveCatalogManager();
+    renderOptionGroupsList();
+}
+
+function deleteOptionGroup(gIdx) {
+    adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex].optionGroups.splice(gIdx, 1);
+    saveCatalogManager();
+    renderOptionGroupsList();
+}
+
+function addOptionToGroup(gIdx) {
+    const nameInput = document.getElementById(`new-opt-name-${gIdx}`);
+    const priceInput = document.getElementById(`new-opt-price-${gIdx}`);
+    const imageInput = document.getElementById(`new-opt-img-${gIdx}`);
+    
+    if (!nameInput.value || !priceInput.value) return alert("Completa nombre y precio");
+
+    const newOpt = {
+        id: 'o_' + Date.now(),
         name: nameInput.value,
         price: parseInt(priceInput.value)
     };
     
     if (imageInput.value.trim() !== '') {
-        newExtra.image = imageInput.value.trim();
+        newOpt.image = imageInput.value.trim();
     }
 
-    adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex].extras.push(newExtra);
-    
-    nameInput.value = '';
-    priceInput.value = '';
-    imageInput.value = '';
+    adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex].optionGroups[gIdx].options.push(newOpt);
     
     saveCatalogManager();
-    renderExtrasList();
+    renderOptionGroupsList();
 }
 
-function deleteExtra(extraIndex) {
-    adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex].extras.splice(extraIndex, 1);
+function deleteOption(gIdx, oIdx) {
+    adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex].optionGroups[gIdx].options.splice(oIdx, 1);
     saveCatalogManager();
-    renderExtrasList();
+    renderOptionGroupsList();
 }
 // --- Customer Info & Messaging ---
 function openCustomerModal(orderId) {

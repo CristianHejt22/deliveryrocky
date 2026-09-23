@@ -246,7 +246,18 @@ function openProductOptions(id) {
     const product = getProductById(id);
     if (!product) return;
 
-    if (!product.extras || product.extras.length === 0) {
+    // Backward compatibility & migration on the fly for client
+    let groups = product.optionGroups || [];
+    if (product.extras && product.extras.length > 0 && groups.length === 0) {
+        groups = [{
+            id: 'g_legacy',
+            name: 'Adicionales',
+            type: 'checkbox',
+            options: product.extras
+        }];
+    }
+
+    if (groups.length === 0) {
         // No extras, add directly
         addToCart(id, []);
         return;
@@ -257,27 +268,34 @@ function openProductOptions(id) {
     document.getElementById('extras-modal-title').innerText = product.name;
     
     const container = document.getElementById('extras-container');
-    let html = '<p style="padding: 0 20px; margin-bottom: 15px; color: var(--text-muted);">Selecciona los adicionales que desees:</p>';
+    let html = '';
     
-    html += '<div class="extras-grid">';
-    product.extras.forEach(extra => {
-        let imgHtml = extra.image ? 
-            `<div class="extra-card-img-container"><img src="${extra.image}" alt="${extra.name}" class="extra-card-img" loading="lazy"></div>` : 
-            `<div class="extra-card-img-container"><i data-lucide="plus-circle" style="width:32px; height:32px; color:var(--text-muted); opacity:0.5;"></i></div>`;
+    groups.forEach(group => {
+        html += `<h4 style="padding: 0 20px; margin-top: 15px; margin-bottom: 10px; font-size: 1rem; color: var(--text-main);">${group.name} <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">${group.type === 'radio' ? '(Elige 1)' : '(Opcional)'}</span></h4>`;
+        html += '<div class="extras-grid">';
         
-        html += `
-            <label class="extra-card-label">
-                <input type="checkbox" name="extra" value="${extra.id}">
-                ${imgHtml}
-                <div class="extra-card-check"><i data-lucide="check" style="width:14px; stroke-width: 3px;"></i></div>
-                <div class="extra-card-info">
-                    <div class="extra-card-name">${extra.name}</div>
-                    <div class="extra-card-price">+${formatPrice(extra.price)}</div>
-                </div>
-            </label>
-        `;
+        group.options.forEach(opt => {
+            let imgHtml = opt.image ? 
+                `<div class="extra-card-img-container"><img src="${opt.image}" alt="${opt.name}" class="extra-card-img" loading="lazy"></div>` : 
+                `<div class="extra-card-img-container"><i data-lucide="${group.type === 'radio' ? 'circle-dot' : 'plus-square'}" style="width:32px; height:32px; color:var(--text-muted); opacity:0.5;"></i></div>`;
+            
+            let inputType = group.type === 'radio' ? 'radio' : 'checkbox';
+            let inputName = group.type === 'radio' ? `group_${group.id}` : `extra`;
+            
+            html += `
+                <label class="extra-card-label">
+                    <input type="${inputType}" name="${inputName}" class="opt-input" data-group-id="${group.id}" value="${opt.id}">
+                    ${imgHtml}
+                    <div class="extra-card-check"><i data-lucide="check" style="width:14px; stroke-width: 3px;"></i></div>
+                    <div class="extra-card-info">
+                        <div class="extra-card-name">${opt.name}</div>
+                        <div class="extra-card-price">${opt.price > 0 ? '+' + formatPrice(opt.price) : 'Gratis'}</div>
+                    </div>
+                </label>
+            `;
+        });
+        html += '</div>';
     });
-    html += '</div>';
     
     container.innerHTML = html;
     lucide.createIcons();
@@ -293,8 +311,27 @@ function closeExtrasModal() {
 function confirmExtrasAndAdd() {
     if (!currentProductForExtras) return;
     
-    // Gather checked extras
-    const checkboxes = document.querySelectorAll('input[name="extra"]:checked');
+    let groups = currentProductForExtras.optionGroups || [];
+    if (currentProductForExtras.extras && currentProductForExtras.extras.length > 0 && groups.length === 0) {
+        groups = [{ id: 'g_legacy', type: 'checkbox', options: currentProductForExtras.extras }];
+    }
+    
+    // Validate required groups (radio buttons)
+    let valid = true;
+    groups.forEach(g => {
+        if (g.type === 'radio') {
+            const checked = document.querySelector(`input[name="group_${g.id}"]:checked`);
+            if (!checked) {
+                valid = false;
+                alert(`Debes seleccionar una opción para: ${g.name}`);
+            }
+        }
+    });
+    
+    if (!valid) return;
+
+    // Gather checked inputs
+    const checkboxes = document.querySelectorAll('.opt-input:checked');
     const selectedExtrasIds = Array.from(checkboxes).map(cb => cb.value);
     
     addToCart(currentProductForExtras.id, selectedExtrasIds);
@@ -305,10 +342,25 @@ function confirmExtrasAndAdd() {
 function addToCart(productId, selectedExtrasIds = []) {
     const product = getProductById(productId);
     
-    // Map IDs to actual extra objects
+    // Map IDs to actual extra objects using optionGroups
     let selectedExtras = [];
-    if (product.extras && selectedExtrasIds.length > 0) {
-        selectedExtras = product.extras.filter(e => selectedExtrasIds.includes(e.id));
+    let groups = product.optionGroups || [];
+    if (product.extras && product.extras.length > 0 && groups.length === 0) {
+        groups = [{ id: 'g_legacy', type: 'checkbox', options: product.extras }];
+    }
+    
+    if (selectedExtrasIds.length > 0) {
+        groups.forEach(g => {
+            if (g.options) {
+                g.options.forEach(opt => {
+                    if (selectedExtrasIds.includes(opt.id)) {
+                        // Prepend group name for better display if it's not the legacy group
+                        let displayName = g.id === 'g_legacy' ? opt.name : `${opt.name}`;
+                        selectedExtras.push({ id: opt.id, name: displayName, price: opt.price });
+                    }
+                });
+            }
+        });
     }
     
     // Create unique Cart Item Key (e.g. "1_e1_e2")

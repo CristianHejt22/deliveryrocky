@@ -517,26 +517,28 @@
         </div>
     </div>
 
-    <!-- Extras Manager Modal -->
+    <!-- Extras / Options Manager Modal -->
     <div class="modal-overlay" id="extras-modal-overlay">
-        <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 600px;">
             <div class="modal-header">
-                <div class="modal-title">Gestionar Extras</div>
+                <div class="modal-title">Gestionar Opciones Avanzadas</div>
                 <button class="close-modal" onclick="closeExtrasModal()"><i data-lucide="x"></i></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <div id="extras-list-container" style="margin-bottom: 20px;">
                     <!-- Rendered by JS -->
                 </div>
                 
-                <h4 style="margin-bottom: 10px;">Agregar Nuevo Extra</h4>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="text" id="new-extra-name" class="form-control" placeholder="Nombre (ej. Cheddar)">
-                    <input type="number" id="new-extra-price" class="form-control" placeholder="Precio" style="width: 100px;">
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <input type="url" id="new-extra-image" class="form-control" placeholder="URL de Imagen (Opcional)">
-                    <button type="button" class="btn btn-next" onclick="addExtra()">Añadir</button>
+                <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                    <h4 style="margin-bottom: 10px; font-size: 0.95rem;">Crear Nuevo Grupo de Opciones</h4>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="new-group-name" class="form-control" placeholder="Nombre (ej. Aderezos, Tamaño)">
+                        <select id="new-group-type" class="form-control" style="width: 150px;">
+                            <option value="checkbox">Múltiple (Checkboxes)</option>
+                            <option value="radio">Única (Radio)</option>
+                        </select>
+                        <button type="button" class="btn btn-next" onclick="addOptionGroup()">Crear Grupo</button>
+                    </div>
                 </div>
             </div>
         </div>

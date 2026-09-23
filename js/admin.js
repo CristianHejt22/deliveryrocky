@@ -540,12 +540,17 @@ function renderExtrasList() {
         return;
     }
 
-    let html = item.extras.map((ex, exIdx) => `
+    let html = item.extras.map((ex, exIdx) => {
+        let imgHtml = ex.image ? `<img src="${ex.image}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 10px;">` : '';
+        return `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 8px;">
-            <div><strong>${ex.name}</strong> <span style="color:var(--primary); margin-left:10px;">+${formatPrice(ex.price)}</span></div>
+            <div style="display: flex; align-items: center;">
+                ${imgHtml}
+                <div><strong>${ex.name}</strong> <span style="color:var(--primary); margin-left:10px;">+${formatPrice(ex.price)}</span></div>
+            </div>
             <button class="btn-icon" style="color: #FF5630;" onclick="deleteExtra(${exIdx})"><i data-lucide="trash-2" style="width:16px;"></i></button>
         </div>
-    `).join('');
+    `}).join('');
     
     container.innerHTML = html;
     lucide.createIcons();
@@ -554,6 +559,7 @@ function renderExtrasList() {
 function addExtra() {
     const nameInput = document.getElementById('new-extra-name');
     const priceInput = document.getElementById('new-extra-price');
+    const imageInput = document.getElementById('new-extra-image');
     
     if (!nameInput.value || !priceInput.value) return alert("Completa el nombre y el precio");
 
@@ -562,11 +568,16 @@ function addExtra() {
         name: nameInput.value,
         price: parseInt(priceInput.value)
     };
+    
+    if (imageInput.value.trim() !== '') {
+        newExtra.image = imageInput.value.trim();
+    }
 
     adminCatalog[currentExtraCatIndex].items[currentExtraItemIndex].extras.push(newExtra);
     
     nameInput.value = '';
     priceInput.value = '';
+    imageInput.value = '';
     
     saveCatalogManager();
     renderExtrasList();

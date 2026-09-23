@@ -259,16 +259,21 @@ function openProductOptions(id) {
     const container = document.getElementById('extras-container');
     let html = '<p style="padding: 0 20px; margin-bottom: 15px; color: var(--text-muted);">Selecciona los adicionales que desees:</p>';
     
-    html += '<div style="padding: 0 20px;">';
+    html += '<div class="extras-grid">';
     product.extras.forEach(extra => {
+        let imgHtml = extra.image ? 
+            `<div class="extra-card-img-container"><img src="${extra.image}" alt="${extra.name}" class="extra-card-img" loading="lazy"></div>` : 
+            `<div class="extra-card-img-container"><i data-lucide="plus-circle" style="width:32px; height:32px; color:var(--text-muted); opacity:0.5;"></i></div>`;
+        
         html += `
-            <label class="extra-pill-label">
+            <label class="extra-card-label">
                 <input type="checkbox" name="extra" value="${extra.id}">
-                <div class="pill-content">
-                    <div class="pill-check-indicator"><i data-lucide="check" style="width:12px; stroke-width: 3px;"></i></div>
-                    <span style="font-weight: 600;">${extra.name}</span>
+                ${imgHtml}
+                <div class="extra-card-check"><i data-lucide="check" style="width:14px; stroke-width: 3px;"></i></div>
+                <div class="extra-card-info">
+                    <div class="extra-card-name">${extra.name}</div>
+                    <div class="extra-card-price">+${formatPrice(extra.price)}</div>
                 </div>
-                <span class="pill-price">+${formatPrice(extra.price)}</span>
             </label>
         `;
     });

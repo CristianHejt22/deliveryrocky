@@ -820,3 +820,110 @@ main {
 .extra-pill-label input[type="checkbox"]:checked ~ .pill-price {
   color: var(--primary);
 }
+
+/* Extras Card Grid */
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 0 20px 20px 20px;
+}
+
+.extra-card-label {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.extra-card-label:hover {
+  border-color: rgba(255, 152, 0, 0.5); /* Using orange based on primary color */
+  transform: translateY(-2px);
+}
+
+.extra-card-label input[type="checkbox"] {
+  display: none;
+}
+
+.extra-card-img-container {
+  width: 100%;
+  height: 100px;
+  background: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.extra-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.extra-card-label:hover .extra-card-img {
+  transform: scale(1.05);
+}
+
+.extra-card-info {
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.extra-card-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.extra-card-price {
+  font-weight: 800;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.extra-card-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  transition: var(--transition);
+  z-index: 2;
+}
+
+.extra-card-label input[type="checkbox"]:checked ~ .extra-card-check {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.extra-card-label input[type="checkbox"]:checked ~ .extra-card-info .extra-card-name {
+  color: var(--primary);
+}
+
+.extra-card-label input[type="checkbox"]:checked ~ .extra-card-info .extra-card-price {
+  color: var(--primary);
+}
+
+.extra-card-label:has(input[type="checkbox"]:checked) {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+}

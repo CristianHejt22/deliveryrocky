@@ -15,108 +15,93 @@
         top: 0;
         width: 100%;
         display: block !important;
+        background: #fff;
     }
 
-    /* Configuración de página para ticket térmico 80mm */
+    /* Configuración de página - no forzamos mm para no romper drivers de impresoras chinas/térmicas */
     @page {
         margin: 0;
-        size: 80mm auto; 
     }
 
-    /* Estilos del Ticket 80mm */
+    /* Estilos del Ticket - 100% width para que la impresora lo escale */
     .ticket {
-        width: 74mm; /* Margen de seguridad para 80mm */
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 320px; /* ~80mm a 203 DPI */
         margin: 0 auto;
-        padding: 5mm 3mm;
+        padding: 5px;
         font-family: 'Courier New', Courier, monospace;
-        font-size: 15px; /* Más grande para que sea legible y no encimado */
-        line-height: 1.5; /* Más espacio entre líneas */
+        font-size: 13px;
+        line-height: 1.4;
         color: #000;
         background: #fff;
     }
 
     .ticket-header {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
     .ticket-brand {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: bold;
-        margin: 0 0 10px 0;
+        margin: 0 0 8px 0;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
     .ticket-header p {
-        margin: 5px 0;
-        font-size: 14px;
+        margin: 4px 0;
+        font-size: 12px;
     }
 
     .ticket-divider {
-        border-top: 2px dashed #000;
-        margin: 15px 0;
+        border-top: 1px dashed #000;
+        margin: 10px 0;
     }
 
     .ticket-info {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     .ticket-info p {
-        margin: 8px 0;
+        margin: 6px 0;
     }
 
     .ticket-items {
         width: 100%;
         border-collapse: collapse;
-        margin: 15px 0;
+        margin: 10px 0;
     }
 
     .ticket-items th {
         text-align: left;
-        border-bottom: 2px dashed #000;
-        padding-bottom: 8px;
-        margin-bottom: 8px;
-        font-size: 14px;
+        border-bottom: 1px dashed #000;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        font-size: 13px;
         text-transform: uppercase;
     }
 
     .ticket-items td {
-        padding: 8px 0;
+        padding: 6px 0;
         vertical-align: top;
     }
 
-    .qty { width: 15%; text-align: center; font-weight: bold; }
-    .desc { width: 55%; padding-right: 10px; }
-    .price { width: 30%; text-align: right; }
+    .qty { width: 10%; text-align: left; font-weight: bold; }
+    .desc { width: 55%; padding-right: 5px; }
+    .price { width: 35%; text-align: right; }
 
     .ticket-totals {
-        margin-top: 20px;
-        padding-top: 10px;
-    }
-
-    .ticket-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 8px;
-        font-size: 15px;
-    }
-
-    .ticket-row.total {
-        font-weight: bold;
-        font-size: 20px;
         margin-top: 15px;
-        border-top: 2px dashed #000;
-        padding-top: 15px;
-        border-bottom: 2px dashed #000;
-        padding-bottom: 15px;
     }
 
     .ticket-footer {
         text-align: center;
-        margin-top: 30px;
-        font-size: 14px;
+        margin-top: 25px;
+        font-size: 13px;
         font-weight: bold;
-        line-height: 1.6;
+        line-height: 1.5;
+        padding-bottom: 20px; /* Margen final para que la guillotina no corte el texto */
     }
 }

@@ -63,20 +63,20 @@ function printTicket(orderId) {
             
             ${order.notes ? `<div style="padding: 10px 0; font-size: 14px;"><b>NOTA PARA COCINA:</b><br>${order.notes}</div><div class="ticket-divider"></div>` : ''}
             
-            <div class="ticket-totals">
-                <div class="ticket-row">
-                    <span>Subtotal:</span>
-                    <span>${formatPrice(order.total - order.shipping)}</span>
-                </div>
-                <div class="ticket-row">
-                    <span>Envío:</span>
-                    <span>${formatPrice(order.shipping)}</span>
-                </div>
-                <div class="ticket-row total">
-                    <span>TOTAL:</span>
-                    <span>${formatPrice(order.total)}</span>
-                </div>
-            </div>
+            <table class="ticket-totals" style="width: 100%; border-collapse: collapse;">
+                <tr class="ticket-row">
+                    <td style="text-align: right; padding-right: 15px;">Subtotal:</td>
+                    <td style="text-align: right; width: 35%;">${formatPrice(order.total - order.shipping)}</td>
+                </tr>
+                <tr class="ticket-row">
+                    <td style="text-align: right; padding-right: 15px;">Envío:</td>
+                    <td style="text-align: right; width: 35%;">${formatPrice(order.shipping)}</td>
+                </tr>
+                <tr class="ticket-row total">
+                    <td style="text-align: right; padding-right: 15px; font-weight: bold; font-size: 18px; border-top: 2px dashed #000; border-bottom: 2px dashed #000; padding-top: 10px; padding-bottom: 10px; margin-top: 5px;">TOTAL:</td>
+                    <td style="text-align: right; width: 35%; font-weight: bold; font-size: 18px; border-top: 2px dashed #000; border-bottom: 2px dashed #000; padding-top: 10px; padding-bottom: 10px; margin-top: 5px;">${formatPrice(order.total)}</td>
+                </tr>
+            </table>
             
             <div class="ticket-footer">
                 <p>¡Gracias por elegir a Punto Milanga!</p>

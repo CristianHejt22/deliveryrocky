@@ -27,7 +27,7 @@
     .ticket {
         box-sizing: border-box;
         width: 100%;
-        max-width: 320px; /* ~80mm a 203 DPI */
+        max-width: 220px; /* ~58mm a 203 DPI */
         margin: 0 auto;
         padding: 5px;
         font-family: 'Courier New', Courier, monospace;
@@ -35,6 +35,7 @@
         line-height: 1.4;
         color: #000;
         background: #fff;
+        font-weight: bold; /* Todo en negritas para fácil lectura */
     }
 
     .ticket-header {
@@ -102,6 +103,6 @@
         font-size: 13px;
         font-weight: bold;
         line-height: 1.5;
-        padding-bottom: 20px; /* Margen final para que la guillotina no corte el texto */
+        padding-bottom: 2mm; /* Cortar exactamente a los 2mm */
     }
 }

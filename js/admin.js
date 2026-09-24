@@ -392,11 +392,19 @@ function renderCatalogManager() {
         html = '<p>No hay catálogo guardado. Abre la app del cliente primero para inicializar datos por defecto.</p>';
     } else {
         adminCatalog.forEach((cat, catIndex) => {
-            let rowsHtml = cat.items.map((item, itemIndex) => `
+            let rowsHtml = cat.items.map((item, itemIndex) => {
+                let optionsCount = 0;
+                if (item.optionGroups) {
+                    item.optionGroups.forEach(g => optionsCount += g.options ? g.options.length : 0);
+                } else if (item.extras) {
+                    optionsCount = item.extras.length;
+                }
+                
+                return `
                 <tr>
                     <td><strong>${item.name}</strong><div style="font-size:0.8rem;color:var(--text-muted);">${item.desc}</div></td>
                     <td>${formatPrice(item.price)}</td>
-                    <td>${item.extras ? item.extras.length : 0} opciones</td>
+                    <td>${optionsCount} opciones</td>
                     <td style="text-align:right;">
                         <div class="action-btns" style="justify-content: flex-end;">
                             <button class="btn-icon" title="Gestionar Extras" onclick="openExtrasModalManager(${catIndex}, ${itemIndex})"><i data-lucide="layers" style="width:16px;"></i></button>
@@ -405,7 +413,7 @@ function renderCatalogManager() {
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
 
             html += `
                 <div class="cat-section">
@@ -469,12 +477,15 @@ function saveProduct(e) {
         // Update existing
         const idx = parseInt(itemIndex);
         productData.id = adminCatalog[catIndex].items[idx].id; // Keep original ID
-        productData.extras = adminCatalog[catIndex].items[idx].extras || []; // Keep extras
+        productData.optionGroups = adminCatalog[catIndex].items[idx].optionGroups || []; // Keep options
+        if (adminCatalog[catIndex].items[idx].extras) {
+            productData.extras = adminCatalog[catIndex].items[idx].extras; // Keep extras for legacy
+        }
         adminCatalog[catIndex].items[idx] = productData;
     } else {
         // Create new
         productData.id = Date.now(); // Generate unique ID
-        productData.extras = [];
+        productData.optionGroups = [];
         adminCatalog[catIndex].items.push(productData);
     }
 

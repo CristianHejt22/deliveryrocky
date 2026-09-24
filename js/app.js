@@ -928,6 +928,8 @@ function listenToMyOrders(uid) {
                     preparing: 'var(--primary)',
                     ready: '#28a745',
                     delivered: '#6c757d',
+                    done: '#6c757d',
+                    archived: '#6c757d',
                     cancelled: '#dc3545'
                 };
                 const statusNames = {
@@ -935,6 +937,8 @@ function listenToMyOrders(uid) {
                     preparing: 'Preparando',
                     ready: 'Listo',
                     delivered: 'Entregado',
+                    done: 'Entregado',
+                    archived: 'Entregado',
                     cancelled: 'Cancelado'
                 };
                 

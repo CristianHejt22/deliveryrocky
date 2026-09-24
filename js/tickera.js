@@ -31,11 +31,9 @@ function printTicket(orderId) {
     const ticketHtml = `
         <div class="ticket">
             <div class="ticket-header" style="text-align: center;">
-                <div style="font-family: 'Arial Black', Arial, sans-serif; font-size: 24px; font-weight: 900; line-height: 1; margin-bottom: 10px; letter-spacing: 1px;">
-                    PUNTO<br>MILANGA
-                </div>
+                <img src="img/logo.png" alt="Punto Milanga" style="max-width: 140px; height: auto; filter: grayscale(100%) contrast(250%) brightness(80%); margin: 0 auto 10px auto; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
                 <p>Bahía Blanca</p>
-                <p>Tel: (291) 400-0000</p>
+                <p>Tel: 2915658321</p>
                 <div class="ticket-divider"></div>
             </div>
             
@@ -89,8 +87,16 @@ function printTicket(orderId) {
 
     printArea.innerHTML = ticketHtml;
 
-    // Trigger print
-    setTimeout(() => {
-        window.print();
-    }, 150);
+    // Trigger print after image loads
+    const logoImg = printArea.querySelector('img');
+    if (logoImg) {
+        if (logoImg.complete) {
+            setTimeout(() => window.print(), 100);
+        } else {
+            logoImg.onload = () => setTimeout(() => window.print(), 100);
+            logoImg.onerror = () => setTimeout(() => window.print(), 100);
+        }
+    } else {
+        setTimeout(() => window.print(), 150);
+    }
 }

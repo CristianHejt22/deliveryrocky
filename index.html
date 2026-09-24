@@ -289,7 +289,7 @@
                     <div id="payment-alias-display" style="font-size: 1.2rem; font-weight: 800; color: var(--primary); user-select: all;">CARGANDO...</div>
                 </div>
                 
-                <div class="auth-input-group" style="border: 2px dashed var(--border-color); padding: 20px; text-align: center; border-radius: 8px; background: #fafafa; cursor: pointer;" onclick="document.getElementById('payment-file').click()">
+                <div class="auth-input-group" style="border: 2px dashed var(--primary); padding: 20px; text-align: center; border-radius: 8px; background: rgba(255, 152, 0, 0.05); cursor: pointer; transition: all 0.3s ease;" onclick="document.getElementById('payment-file').click()">
                     <i data-lucide="upload-cloud" style="width: 32px; height: 32px; color: var(--primary); margin: 0 auto 10px auto; display: block;"></i>
                     <div id="payment-file-name" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Toca aquí para seleccionar tu comprobante</div>
                     <input type="file" id="payment-file" accept="image/*,application/pdf" style="display: none;" onchange="handleFileSelect(event)">

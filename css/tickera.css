@@ -1,20 +1,14 @@
 /* Estilos específicos para impresión de Tickera */
 @media print {
-    /* Ocultar todo lo que no sea el área del ticket */
-    body * {
-        visibility: hidden;
-    }
-    
-    #ticket-print-area, #ticket-print-area * {
-        visibility: visible;
+    /* Ocultar TODO el layout del admin por completo (elimina espacios fantasma) */
+    body > *:not(#ticket-print-area) {
+        display: none !important;
     }
     
     #ticket-print-area {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
         display: block !important;
+        position: relative !important;
+        width: 100%;
         background: #fff;
     }
 

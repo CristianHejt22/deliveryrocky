@@ -11,9 +11,13 @@ function printTicket(orderId) {
     // Formato Moneda
     const formatPrice = (price) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(price);
     
-    // Fecha actual
+    // Fecha actual formato DD/MM/YYYY
     const now = new Date();
-    const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = `${day}/${month}/${year} ${timeStr}`;
 
     let itemsHtml = '';
     order.items.forEach(item => {
@@ -31,7 +35,7 @@ function printTicket(orderId) {
     const ticketHtml = `
         <div class="ticket">
             <div class="ticket-header" style="text-align: center;">
-                <img src="img/logo.png" alt="Punto Milanga" style="max-width: 140px; height: auto; filter: grayscale(100%) contrast(250%) brightness(80%); margin: 0 auto 10px auto; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                <img src="img/logo.png" alt="Punto Milanga" style="max-width: 140px; height: auto; filter: grayscale(100%) contrast(300%) brightness(0%); margin: 0 auto 10px auto; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
                 <p>Bahía Blanca</p>
                 <p>Tel: 2915658321</p>
                 <div class="ticket-divider"></div>

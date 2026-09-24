@@ -341,6 +341,11 @@
                     <span id="metric-orders">0</span>
                 </div>
             </div>
+            <div style="margin-left: auto;">
+                <button class="btn" style="background: #25D366; color: white; display: flex; align-items: center; gap: 8px; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="openExportContactsModal()">
+                    <i data-lucide="users" style="width:18px;"></i> Exportar Números
+                </button>
+            </div>
         </div>
         
         <div class="board" style="display: flex; flex-grow: 1; overflow: hidden;">
@@ -569,6 +574,36 @@
                 <textarea id="custom-message-text" class="form-control" placeholder="Ej. Tu pedido se demorará 10 minutos por alta demanda. ¡Disculpa las molestias!" rows="3" style="width: 100%; resize: vertical; margin-bottom: 15px;"></textarea>
                 <input type="hidden" id="message-order-id">
                 <button class="btn btn-next" style="width: 100%; justify-content: center;" onclick="sendCustomMessage()">Enviar Notificación Push <i data-lucide="send" style="width: 16px;"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contacts Export Modal -->
+    <div class="modal-overlay" id="contacts-modal-overlay">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">Números de WhatsApp</div>
+                <button class="close-modal" onclick="closeContactsModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="padding-top: 10px;">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Aquí tienes la lista de números únicos de todos tus clientes. Puedes copiarlos para crear una lista de difusión.</p>
+                <textarea id="contacts-list-text" class="form-control" rows="10" style="width: 100%; resize: vertical; margin-bottom: 15px; font-family: monospace; font-size: 0.9rem;" readonly></textarea>
+                <button class="btn btn-next" style="width: 100%; justify-content: center; background: #25D366; color: white;" onclick="copyContactsList()">Copiar Lista <i data-lucide="copy" style="width: 16px;"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contacts Export Modal -->
+    <div class="modal-overlay" id="contacts-modal-overlay">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">Números de WhatsApp</div>
+                <button class="close-modal" onclick="closeContactsModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="padding-top: 10px;">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Aquí tienes la lista de números únicos de todos tus clientes. Puedes copiarlos para crear una lista de difusión.</p>
+                <textarea id="contacts-list-text" class="form-control" rows="10" style="width: 100%; resize: vertical; margin-bottom: 15px; font-family: monospace; font-size: 0.9rem;" readonly></textarea>
+                <button class="btn btn-next" style="width: 100%; justify-content: center; background: #25D366; color: white;" onclick="copyContactsList()">Copiar Lista <i data-lucide="copy" style="width: 16px;"></i></button>
             </div>
         </div>
     </div>

@@ -659,7 +659,8 @@ function openCustomerModal(orderId) {
     
     const phone = order.phone || 'No registrado';
     const hasPhone = order.phone && order.phone.length > 5;
-    const wpLink = hasPhone ? `https://wa.me/${order.phone.replace(/[^0-9]/g, '')}` : '#';
+    const wpMessage = encodeURIComponent(`Hola ${order.customer}, te escribimos de Punto Milanga por tu pedido #${order.id}. `);
+    const wpLink = hasPhone ? `https://wa.me/${order.phone.replace(/[^0-9]/g, '')}?text=${wpMessage}` : '#';
     
     const html = `
         <div style="margin-bottom: 15px;">
@@ -720,6 +721,42 @@ async function sendCustomMessage() {
         alert("Modo offline: No se puede enviar notificación push.");
         closeMessageModal();
     }
+}
+
+// --- WhatsApp Contacts Export ---
+function openExportContactsModal() {
+    // Extract unique valid phones
+    const phoneSet = new Set();
+    orders.forEach(order => {
+        if (order.phone && order.phone.length > 6) {
+            // Keep only numbers
+            const cleanPhone = order.phone.replace(/[^0-9]/g, '');
+            if (cleanPhone.length > 6) {
+                phoneSet.add(cleanPhone);
+            }
+        }
+    });
+
+    const phones = Array.from(phoneSet).sort();
+    const listText = phones.length > 0 ? phones.join('\n') : "No hay números registrados aún.";
+    
+    document.getElementById('contacts-list-text').value = listText;
+    document.getElementById('contacts-modal-overlay').classList.add('active');
+}
+
+function closeContactsModal() {
+    document.getElementById('contacts-modal-overlay').classList.remove('active');
+}
+
+function copyContactsList() {
+    const textarea = document.getElementById('contacts-list-text');
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(textarea.value).then(() => {
+        alert("¡Lista copiada al portapapeles!");
+    }).catch(err => {
+        console.error("Error al copiar: ", err);
+    });
 }
 
 // --- CONFIGURACIÓN GLOBAL ---

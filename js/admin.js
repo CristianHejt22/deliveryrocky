@@ -726,19 +726,26 @@ async function sendCustomMessage() {
 // --- WhatsApp Contacts Export ---
 function openExportContactsModal() {
     // Extract unique valid phones
-    const phoneSet = new Set();
+    const phoneMap = new Map();
     orders.forEach(order => {
         if (order.phone && order.phone.length > 6) {
             // Keep only numbers
             const cleanPhone = order.phone.replace(/[^0-9]/g, '');
             if (cleanPhone.length > 6) {
-                phoneSet.add(cleanPhone);
+                // Store phone with latest customer name
+                phoneMap.set(cleanPhone, order.customer || 'Cliente');
             }
         }
     });
 
-    const phones = Array.from(phoneSet).sort();
-    const listText = phones.length > 0 ? phones.join('\n') : "No hay números registrados aún.";
+    const contactsList = [];
+    phoneMap.forEach((name, phone) => {
+        contactsList.push(`${phone}, ${name}`);
+    });
+    
+    contactsList.sort();
+
+    const listText = contactsList.length > 0 ? contactsList.join('\n') : "No hay números registrados aún.";
     
     document.getElementById('contacts-list-text').value = listText;
     document.getElementById('contacts-modal-overlay').classList.add('active');

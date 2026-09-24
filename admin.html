@@ -341,11 +341,6 @@
                     <span id="metric-orders">0</span>
                 </div>
             </div>
-            <div style="margin-left: auto;">
-                <button class="btn" style="background: #25D366; color: white; display: flex; align-items: center; gap: 8px; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="openExportContactsModal()">
-                    <i data-lucide="users" style="width:18px;"></i> Exportar Números
-                </button>
-            </div>
         </div>
         
         <div class="board" style="display: flex; flex-grow: 1; overflow: hidden;">
@@ -427,6 +422,16 @@
             <div class="form-group" style="margin-top:15px;">
                 <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Alias / CBU / CVU para transferencia</label>
                 <input type="text" id="set-payment-alias" class="form-control" placeholder="Ej: PUNTOMILANGA.MP">
+            </div>
+        </div>
+
+        <div class="cat-section">
+            <h3 class="cat-title"><i data-lucide="users" style="display:inline; width:20px; vertical-align:-3px; margin-right:5px;"></i> Herramientas de Marketing</h3>
+            <div style="margin-top:15px;">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">Extrae la lista de contactos de todos los clientes que han realizado pedidos para crear campañas o listas de difusión de WhatsApp.</p>
+                <button class="btn" style="background: #25D366; color: white; display: inline-flex; align-items: center; gap: 8px; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="openExportContactsModal()">
+                    <i data-lucide="download-cloud" style="width:18px;"></i> Exportar Lista de WhatsApps
+                </button>
             </div>
         </div>
 

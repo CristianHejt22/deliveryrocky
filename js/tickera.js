@@ -31,7 +31,11 @@ function printTicket(orderId) {
     const ticketHtml = `
         <div class="ticket">
             <div class="ticket-header" style="text-align: center;">
-                <img src="img/logo.png" alt="Punto Milanga" style="max-width: 180px; height: auto; filter: grayscale(100%) brightness(60%) contrast(120%); margin: 0 auto 10px; display: block;">
+                <svg width="180" height="65" viewBox="0 0 180 65" style="margin: 0 auto 10px; display: block;">
+                    <rect width="180" height="65" fill="white"/>
+                    <text x="90" y="30" font-family="'Arial Black', 'Arial', sans-serif" font-size="28" font-weight="900" letter-spacing="1" text-anchor="middle" fill="black">PUNTO</text>
+                    <text x="90" y="55" font-family="'Arial Black', 'Arial', sans-serif" font-size="22" font-weight="900" letter-spacing="3" text-anchor="middle" fill="black">MILANGA</text>
+                </svg>
                 <p>Bahía Blanca</p>
                 <p>Tel: (291) 400-0000</p>
                 <div class="ticket-divider"></div>
@@ -87,16 +91,9 @@ function printTicket(orderId) {
 
     printArea.innerHTML = ticketHtml;
 
-    // Wait for logo image to load before triggering print dialog
-    const logoImg = printArea.querySelector('img');
-    if (logoImg) {
-        logoImg.onload = () => {
-            window.print();
-        };
-        logoImg.onerror = () => {
-            window.print();
-        };
-    } else {
+    // Trigger print
+    // Pequeño timeout para que el DOM termine de renderizar el SVG
+    setTimeout(() => {
         window.print();
-    }
+    }, 100);
 }

@@ -7,18 +7,23 @@
     
     #ticket-print-area {
         display: block !important;
-        position: relative !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
         width: 100%;
         background: #fff;
     }
 
-    /* Evitar que el 100vh del admin haga que la impresora tire papel en blanco */
+    /* Evitar que el 100vh o display:flex del admin tiren la página hacia abajo */
     html, body {
+        display: block !important;
         height: auto !important;
         min-height: auto !important;
         overflow: visible !important;
-        margin: 0;
-        padding: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     /* Configuración de página - size en auto para que el corte ocurra al terminar el contenido */

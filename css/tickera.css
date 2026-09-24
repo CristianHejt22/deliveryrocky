@@ -18,9 +18,19 @@
         background: #fff;
     }
 
-    /* Configuración de página - no forzamos mm para no romper drivers de impresoras chinas/térmicas */
+    /* Evitar que el 100vh del admin haga que la impresora tire papel en blanco */
+    html, body {
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Configuración de página - size en auto para que el corte ocurra al terminar el contenido */
     @page {
         margin: 0;
+        size: 58mm auto;
     }
 
     /* Estilos del Ticket - 100% width para que la impresora lo escale */

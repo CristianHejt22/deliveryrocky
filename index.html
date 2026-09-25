@@ -72,16 +72,25 @@
     </div>
 
     <!-- Reseñas Destacadas -->
-    <section class="reviews-section" style="padding: 20px 15px; margin-bottom: 5px; background: var(--bg-color);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2 style="font-size: 1.2rem; margin: 0;">Lo que dicen nuestros clientes</h2>
-            <button onclick="openReviewModal()" style="background: none; border: none; color: var(--primary); font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-                <i data-lucide="edit-3" style="width: 16px;"></i> Dejar Reseña
+    <section class="reviews-section" style="padding: 30px 15px; margin-bottom: 10px; background: linear-gradient(to bottom, var(--bg-color), var(--surface)); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            <div>
+                <h2 style="font-size: 1.4rem; margin: 0; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="message-square" style="color: var(--primary);"></i> Lo que dicen nuestros clientes
+                </h2>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: var(--text-muted);">Opiniones reales de quienes ya probaron nuestra comida.</p>
+            </div>
+            <button onclick="openReviewModal()" style="background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 20px; box-shadow: 0 4px 10px rgba(230, 42, 57, 0.3); transition: transform 0.2s;">
+                <i data-lucide="star" style="width: 16px; fill: white;"></i> Calificanos
             </button>
         </div>
-        <div id="public-reviews-container" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
-            <!-- Las reseñas se cargarán aquí desde JS -->
-            <div style="color: var(--text-muted); font-size: 0.9rem;">Cargando reseñas...</div>
+        
+        <div id="public-reviews-container" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; padding-top: 5px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; max-width: 800px; margin-left: auto; margin-right: auto;">
+            <!-- Estado de carga elegante -->
+            <div style="display: flex; gap: 15px; width: 100%;">
+                <div style="min-width: 280px; height: 120px; background: var(--bg-color); border-radius: 12px; border: 1px solid var(--border-color); animation: pulse 1.5s infinite;"></div>
+                <div style="min-width: 280px; height: 120px; background: var(--bg-color); border-radius: 12px; border: 1px solid var(--border-color); animation: pulse 1.5s infinite; animation-delay: 0.2s;"></div>
+            </div>
         </div>
     </section>
 

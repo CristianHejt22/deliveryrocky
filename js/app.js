@@ -206,9 +206,9 @@ function renderCatalog(filter = 'Todas') {
             cat.items.forEach(item => {
                 html += `
                     <div class="product-card" style="animation-delay: ${delay}s">
-                        <img src="${item.image}" alt="${item.name}" class="product-image" loading="lazy">
+                        <img src="${item.image}" alt="${item.name}" class="product-image" loading="lazy" style="cursor:pointer;" onclick="openProductOptions(${item.id})">
                         <div class="product-info">
-                            <div class="product-title">${item.name}</div>
+                            <div class="product-title" style="cursor:pointer;" onclick="openProductOptions(${item.id})">${item.name}</div>
                             <div class="product-desc">${item.desc}</div>
                             <div class="product-footer">
                                 <span class="product-price">${formatPrice(item.price)}</span>
@@ -1148,12 +1148,25 @@ function loadPublicReviews() {
             for(let i = 1; i <= 5; i++) {
                 starsHtml += `<i data-lucide="star" style="width:14px; fill: ${i <= data.rating ? '#FF9800' : 'none'}; color: ${i <= data.rating ? '#FF9800' : '#ccc'}"></i>`;
             }
+            const initial = (data.name || 'C').charAt(0).toUpperCase();
+            const dateStr = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : '';
             
             const reviewCard = `
-                <div style="min-width: 280px; max-width: 320px; background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <div style="display: flex; gap: 2px; margin-bottom: 8px;">${starsHtml}</div>
-                    <p style="font-size: 0.9rem; font-style: italic; margin-bottom: 10px; color: var(--text-main);">"${data.message}"</p>
-                    <div style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">- ${data.name || 'Cliente anónimo'}</div>
+                <div style="min-width: 300px; max-width: 340px; background: var(--surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="display: flex; gap: 2px; margin-bottom: 12px;">${starsHtml}</div>
+                        <p style="font-size: 0.95rem; font-style: italic; margin: 0 0 15px 0; color: var(--text-main); line-height: 1.4;">"${data.message}"</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: auto;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #ff7b00); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; flex-shrink: 0;">
+                            ${initial}
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 0.85rem; font-weight: 800; color: var(--text-main);">${data.name || 'Cliente anónimo'}</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">${dateStr}</span>
+                        </div>
+                        <i data-lucide="badge-check" style="width: 18px; color: #25D366; margin-left: auto;" title="Reseña Verificada"></i>
+                    </div>
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', reviewCard);

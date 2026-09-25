@@ -366,6 +366,61 @@
         </div>
     </div>
     
+    <!-- Product Page Fullscreen Overlay -->
+    <div id="product-page-overlay" style="display: none; position: fixed; inset: 0; background: var(--bg-color); z-index: 10000; flex-direction: column; overflow-y: auto; overflow-x: hidden; animation: slideUp 0.3s ease-out;">
+        
+        <!-- Header con botón Volver transparente -->
+        <div style="position: absolute; top: 15px; left: 15px; z-index: 10;">
+            <button onclick="closeProductPage()" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.5); border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px);">
+                <i data-lucide="arrow-left" style="width: 24px;"></i>
+            </button>
+        </div>
+
+        <!-- Imagen gigante -->
+        <div style="width: 100%; height: 45vh; background: #eee; position: relative;">
+            <img id="product-page-img" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(to top, var(--bg-color), transparent);"></div>
+        </div>
+
+        <!-- Detalles del Producto -->
+        <div style="padding: 20px; margin-top: -30px; position: relative; z-index: 5;">
+            <h1 id="product-page-title" style="font-size: 2rem; margin: 0 0 10px 0; line-height: 1.1;">Nombre</h1>
+            <p id="product-page-desc" style="font-size: 1rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">Desc</p>
+            <div style="font-size: 1.5rem; font-weight: 900; color: var(--primary); margin-bottom: 25px;" id="product-page-price">$0</div>
+
+            <!-- Formularios de Opciones -->
+            <div id="product-page-options" style="margin-bottom: 30px;">
+                <!-- Generado por JS -->
+            </div>
+
+            <!-- Botón Añadir -->
+            <button id="product-page-add-btn" class="checkout-btn" style="width: 100%; margin-bottom: 40px; padding: 15px; font-size: 1.1rem;">
+                Añadir al Carrito
+            </button>
+
+            <!-- Sección de Reseñas del Producto -->
+            <div style="border-top: 1px solid var(--border-color); padding-top: 30px; padding-bottom: 50px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 1.2rem;"><i data-lucide="star" style="width:18px; color:var(--primary); vertical-align:-2px;"></i> Reseñas del producto</h3>
+                    <button onclick="openProductReviewModal()" style="background: none; border: none; color: var(--primary); font-weight: bold; cursor: pointer; font-size: 0.9rem;">
+                        Dejar Reseña
+                    </button>
+                </div>
+                <div id="product-page-reviews-list" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">Cargando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Animación CSS para la página -->
+    <style>
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+
     <!-- Toast Container -->
     <div id="toast-container"></div>
 

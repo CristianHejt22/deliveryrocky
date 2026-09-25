@@ -870,6 +870,7 @@ function loadAdminReviews() {
                         <div>
                             <div style="font-weight: bold;">${data.name}</div>
                             <div style="font-size: 0.8rem; color: var(--text-muted);">${new Date(data.createdAt?.toDate()).toLocaleDateString()}</div>
+                            ${data.productName ? `<div style="display:inline-block; background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; margin-top: 5px;"><i data-lucide="tag" style="width:10px; vertical-align:-1px;"></i> ${data.productName}</div>` : ''}
                         </div>
                         <div style="display:flex; gap:2px;">
                             ${starsHtml}
@@ -907,3 +908,4 @@ function deleteReview(id) {
         db.collection('reviews').doc(id).delete();
     }
 }
+

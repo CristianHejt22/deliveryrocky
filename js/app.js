@@ -206,9 +206,9 @@ function renderCatalog(filter = 'Todas') {
             cat.items.forEach(item => {
                 html += `
                     <div class="product-card" style="animation-delay: ${delay}s">
-                        <img src="${item.image}" alt="${item.name}" class="product-image" loading="lazy" style="cursor:pointer;" onclick="openProductOptions(${item.id})">
+                        <img src="${item.image}" alt="${item.name}" class="product-image" loading="lazy" style="cursor:pointer;" onclick="openProductPage(${item.id})">
                         <div class="product-info">
-                            <div class="product-title" style="cursor:pointer;" onclick="openProductOptions(${item.id})">${item.name}</div>
+                            <div class="product-title" style="cursor:pointer;" onclick="openProductPage(${item.id})">${item.name}</div>
                             <div class="product-desc">${item.desc}</div>
                             <div class="product-footer">
                                 <span class="product-price">${formatPrice(item.price)}</span>
@@ -1175,9 +1175,24 @@ function loadPublicReviews() {
     });
 }
 
+let currentReviewProductId = null;
+let currentReviewProductName = null;
+
 function openReviewModal() {
+    openProductReviewModal(null, null);
+}
+
+function openProductReviewModal(productId = null, productName = null) {
+    if (!currentUser) {
+        showToast('Debes iniciar sesión para dejar una reseña.');
+        openAuthModal();
+        return;
+    }
+    
+    currentReviewProductId = productId;
+    currentReviewProductName = productName;
+    
     document.getElementById('review-modal-overlay').classList.add('active');
-    // Set default rating to 5
     setReviewRating(5);
 }
 
@@ -1228,13 +1243,20 @@ async function submitReview() {
     }
     
     try {
-        await db.collection('reviews').add({
+        const reviewData = {
             rating: rating,
             name: name,
             message: message,
             status: 'pending',
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        };
+        
+        if (currentReviewProductId) {
+            reviewData.productId = currentReviewProductId;
+            reviewData.productName = currentReviewProductName;
+        }
+        
+        await db.collection('reviews').add(reviewData);
         
         closeReviewModal();
         showToast('¡Gracias por tu reseña! La hemos recibido y será publicada pronto.');
@@ -1242,4 +1264,145 @@ async function submitReview() {
         console.error("Error submitting review:", e);
         showToast('Error al enviar la reseña. Inténtalo de nuevo.');
     }
+}
+
+// ==========================================
+// PRODUCT PAGE LOGIC
+// ==========================================
+
+let currentProductPageId = null;
+
+function openProductPage(id) {
+    const product = getProductById(id);
+    if (!product) return;
+
+    currentProductPageId = id;
+    
+    document.getElementById('product-page-img').src = product.image;
+    document.getElementById('product-page-title').innerText = product.name;
+    document.getElementById('product-page-desc').innerText = product.desc;
+    document.getElementById('product-page-price').innerText = formatPrice(product.price);
+
+    // Render options (reusing legacy migration logic if needed)
+    let groups = product.optionGroups || [];
+    if (product.extras && product.extras.length > 0 && groups.length === 0) {
+        groups = [{
+            id: 'g_legacy',
+            name: 'Adicionales',
+            type: 'checkbox',
+            options: product.extras
+        }];
+    }
+
+    const optionsContainer = document.getElementById('product-page-options');
+    optionsContainer.innerHTML = '';
+
+    if (groups.length > 0) {
+        groups.forEach(group => {
+            let groupHtml = `<div class="option-group" style="margin-bottom:20px; background:var(--bg-color); padding:15px; border-radius:12px;">`;
+            groupHtml += `<h4 style="margin:0 0 10px 0; font-size:1.1rem;">${group.name}</h4>`;
+            
+            group.options.forEach(opt => {
+                const optId = `pp_opt_${group.id}_${opt.name.replace(/\s+/g, '')}`;
+                const inputType = group.type === 'radio' ? 'radio' : 'checkbox';
+                const inputName = `pp_group_${group.id}`;
+                
+                groupHtml += `
+                    <label style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border-color); cursor:pointer;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <input type="${inputType}" name="${inputName}" value="${opt.name}" data-price="${opt.price}" style="width:18px; height:18px;">
+                            <span>${opt.name}</span>
+                        </div>
+                        <span style="color:var(--text-muted); font-size:0.9rem;">${opt.price > 0 ? '+'+formatPrice(opt.price) : ''}</span>
+                    </label>
+                `;
+            });
+            groupHtml += `</div>`;
+            optionsContainer.innerHTML += groupHtml;
+        });
+    }
+
+    document.getElementById('product-page-add-btn').onclick = () => {
+        submitProductPageForm(product);
+    };
+
+    // Override the Dejar Reseña button onclick for this specific product
+    document.querySelector('#product-page-overlay button[onclick^="openProductReviewModal"]').setAttribute('onclick', `openProductReviewModal(${id}, '${product.name.replace(/'/g, "\\'")}')`);
+
+    loadProductReviews(id);
+
+    document.getElementById('product-page-overlay').style.display = 'flex';
+    lucide.createIcons();
+}
+
+function closeProductPage() {
+    document.getElementById('product-page-overlay').style.display = 'none';
+}
+
+function submitProductPageForm(product) {
+    let groups = product.optionGroups || [];
+    if (product.extras && product.extras.length > 0 && groups.length === 0) {
+        groups = [{ id: 'g_legacy', type: 'checkbox' }];
+    }
+
+    let selectedOptions = [];
+    
+    // Recolectar opciones seleccionadas
+    groups.forEach(group => {
+        const inputs = document.querySelectorAll(`input[name="pp_group_${group.id}"]:checked`);
+        inputs.forEach(input => {
+            selectedOptions.push({
+                name: input.value,
+                price: parseFloat(input.getAttribute('data-price')) || 0
+            });
+        });
+    });
+
+    addToCart(product.id, selectedOptions);
+    closeProductPage();
+    showToast('Añadido al carrito');
+}
+
+function loadProductReviews(productId) {
+    if (typeof db === 'undefined') return;
+    
+    const container = document.getElementById('product-page-reviews-list');
+    container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">Cargando...</div>';
+    
+    db.collection('reviews')
+      .where('productId', '==', productId)
+      .where('status', '==', 'approved')
+      .orderBy('createdAt', 'desc')
+      .limit(5)
+      .get().then(snapshot => {
+        
+        if (snapshot.empty) {
+            container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">No hay reseñas aún para este producto. ¡Sé el primero!</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            let starsHtml = '';
+            for(let i = 1; i <= 5; i++) {
+                starsHtml += `<i data-lucide="star" style="width:14px; fill: ${i <= data.rating ? '#FF9800' : 'none'}; color: ${i <= data.rating ? '#FF9800' : '#ccc'}"></i>`;
+            }
+            
+            const reviewCard = `
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: bold; font-size: 0.9rem;">${data.name}</span>
+                        <div style="display: flex; gap: 2px;">${starsHtml}</div>
+                    </div>
+                    <p style="font-size: 0.9rem; font-style: italic; margin: 0; color: var(--text-main);">"${data.message}"</p>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', reviewCard);
+        });
+        lucide.createIcons();
+    }).catch(err => {
+        console.error("Error loading product reviews:", err);
+        container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">Error al cargar reseñas.</div>';
+    });
 }

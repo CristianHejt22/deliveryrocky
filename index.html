@@ -71,6 +71,20 @@
         </div>
     </div>
 
+    <!-- Reseñas Destacadas -->
+    <section class="reviews-section" style="padding: 20px 15px; margin-bottom: 5px; background: var(--bg-color);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="font-size: 1.2rem; margin: 0;">Lo que dicen nuestros clientes</h2>
+            <button onclick="openReviewModal()" style="background: none; border: none; color: var(--primary); font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                <i data-lucide="edit-3" style="width: 16px;"></i> Dejar Reseña
+            </button>
+        </div>
+        <div id="public-reviews-container" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
+            <!-- Las reseñas se cargarán aquí desde JS -->
+            <div style="color: var(--text-muted); font-size: 0.9rem;">Cargando reseñas...</div>
+        </div>
+    </section>
+
     <!-- Categories Carousel -->
     <div class="categories-container">
         <div class="categories" id="categories-list">
@@ -297,6 +311,47 @@
                 
                 <button id="btn-confirm-payment" class="checkout-btn" onclick="uploadReceiptAndConfirm()" style="margin-top: 20px; opacity: 0.5; pointer-events: none;">
                     Enviar Comprobante y Finalizar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Review Modal -->
+    <div class="modal-overlay" id="review-modal-overlay">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Déjanos tu reseña</h3>
+                <button class="modal-close" onclick="closeReviewModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">¡Gracias por elegir Punto Milanga! Tu opinión nos ayuda a mejorar.</p>
+                
+                <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+                    <label class="form-label">Calificación</label>
+                    <div id="review-stars-input" style="display: flex; justify-content: center; gap: 10px; cursor: pointer;">
+                        <i data-lucide="star" data-value="1" class="review-star-btn" style="width: 32px; height: 32px; color: #ccc;"></i>
+                        <i data-lucide="star" data-value="2" class="review-star-btn" style="width: 32px; height: 32px; color: #ccc;"></i>
+                        <i data-lucide="star" data-value="3" class="review-star-btn" style="width: 32px; height: 32px; color: #ccc;"></i>
+                        <i data-lucide="star" data-value="4" class="review-star-btn" style="width: 32px; height: 32px; color: #ccc;"></i>
+                        <i data-lucide="star" data-value="5" class="review-star-btn" style="width: 32px; height: 32px; color: #ccc;"></i>
+                    </div>
+                    <input type="hidden" id="review-rating" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tu Nombre</label>
+                    <input type="text" id="review-name" class="form-control" placeholder="Ej: Juan Pérez">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tu Opinión (Opcional)</label>
+                    <textarea id="review-message" class="form-control" rows="3" placeholder="¿Qué te pareció la comida y el servicio?"></textarea>
+                </div>
+
+                <button class="checkout-btn" onclick="submitReview()">
+                    Enviar Reseña
                 </button>
             </div>
         </div>

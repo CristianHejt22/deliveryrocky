@@ -117,6 +117,7 @@ async function loadGlobalSettings() {
 document.addEventListener('DOMContentLoaded', async () => {
     await loadCatalog();
     loadGlobalSettings();
+    loadPublicReviews();
     
     // Biometric App Lock Check
     if (localStorage.getItem('biometric_enabled') === 'true') {
@@ -1124,5 +1125,108 @@ async function requestPushToken(uid) {
         }
     } catch (e) {
         console.log("Error al pedir permiso para notificaciones o generar token: ", e);
+    }
+}
+
+// ---------------- Reviews System ----------------
+function loadPublicReviews() {
+    if (typeof db === 'undefined') return;
+    
+    db.collection('reviews').where('status', '==', 'approved').orderBy('createdAt', 'desc').limit(10).onSnapshot(snapshot => {
+        const container = document.getElementById('public-reviews-container');
+        if (!container) return;
+        
+        if (snapshot.empty) {
+            container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem; padding: 10px;">¡Sé el primero en dejar una reseña!</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            let starsHtml = '';
+            for(let i = 1; i <= 5; i++) {
+                starsHtml += `<i data-lucide="star" style="width:14px; fill: ${i <= data.rating ? '#FF9800' : 'none'}; color: ${i <= data.rating ? '#FF9800' : '#ccc'}"></i>`;
+            }
+            
+            const reviewCard = `
+                <div style="min-width: 280px; max-width: 320px; background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div style="display: flex; gap: 2px; margin-bottom: 8px;">${starsHtml}</div>
+                    <p style="font-size: 0.9rem; font-style: italic; margin-bottom: 10px; color: var(--text-main);">"${data.message}"</p>
+                    <div style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">- ${data.name || 'Cliente anónimo'}</div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', reviewCard);
+        });
+        lucide.createIcons();
+    });
+}
+
+function openReviewModal() {
+    document.getElementById('review-modal-overlay').classList.add('active');
+    // Set default rating to 5
+    setReviewRating(5);
+}
+
+function closeReviewModal() {
+    document.getElementById('review-modal-overlay').classList.remove('active');
+    document.getElementById('review-name').value = '';
+    document.getElementById('review-message').value = '';
+}
+
+function setReviewRating(rating) {
+    document.getElementById('review-rating').value = rating;
+    const stars = document.querySelectorAll('.review-star-btn');
+    stars.forEach(star => {
+        const val = parseInt(star.getAttribute('data-value'));
+        if (val <= rating) {
+            star.style.fill = '#FF9800';
+            star.style.color = '#FF9800';
+        } else {
+            star.style.fill = 'none';
+            star.style.color = '#ccc';
+        }
+    });
+}
+
+// Bind star clicks
+document.addEventListener('DOMContentLoaded', () => {
+    const stars = document.querySelectorAll('.review-star-btn');
+    stars.forEach(star => {
+        star.addEventListener('click', (e) => {
+            const val = parseInt(e.currentTarget.getAttribute('data-value'));
+            setReviewRating(val);
+        });
+    });
+});
+
+async function submitReview() {
+    const rating = parseInt(document.getElementById('review-rating').value);
+    const name = document.getElementById('review-name').value.trim();
+    const message = document.getElementById('review-message').value.trim();
+    
+    if (rating === 0) {
+        showToast('Por favor, selecciona una calificación (estrellas).');
+        return;
+    }
+    if (!name) {
+        showToast('Por favor, ingresa tu nombre.');
+        return;
+    }
+    
+    try {
+        await db.collection('reviews').add({
+            rating: rating,
+            name: name,
+            message: message,
+            status: 'pending',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        closeReviewModal();
+        showToast('¡Gracias por tu reseña! La hemos recibido y será publicada pronto.');
+    } catch (e) {
+        console.error("Error submitting review:", e);
+        showToast('Error al enviar la reseña. Inténtalo de nuevo.');
     }
 }

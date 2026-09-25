@@ -382,6 +382,7 @@ function switchTab(tabId) {
     
     if (tabId === 'catalog') renderCatalogManager();
     if (tabId === 'settings') loadGlobalSettings();
+    if (tabId === 'marketing') loadAdminReviews();
 }
 
 function renderCatalogManager() {
@@ -808,3 +809,101 @@ async function saveGlobalSettings() {
     }
 }
 
+// ==========================================
+// MARKETING Y RESEÑAS
+// ==========================================
+
+function copyTemplate(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" style="width:14px; display:inline-block; vertical-align:middle;"></i> Copiado';
+        lucide.createIcons();
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+        }, 2000);
+    });
+}
+
+function generateStoreQR() {
+    const qrContainer = document.getElementById('qr-container');
+    const qrImage = document.getElementById('qr-image');
+    const storeUrl = window.location.href.replace('admin.html', 'index.html');
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(storeUrl)}`;
+    
+    qrImage.src = qrApiUrl;
+    qrContainer.style.display = 'block';
+}
+
+function loadAdminReviews() {
+    if (!isFirebaseActive) return;
+
+    db.collection('reviews').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        const reviewsList = document.getElementById('reviews-list');
+        const badge = document.getElementById('pending-reviews-badge');
+        
+        if (!reviewsList) return;
+        reviewsList.innerHTML = '';
+        let pendingCount = 0;
+        
+        if (snapshot.empty) {
+            reviewsList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No hay reseñas aún.</div>';
+            badge.innerText = '0 Pendientes';
+            badge.style.display = 'none';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const id = doc.id;
+            const isApproved = data.status === 'approved';
+            
+            if (!isApproved) pendingCount++;
+
+            let starsHtml = '';
+            for(let i = 1; i <= 5; i++) {
+                starsHtml += `<i data-lucide="star" style="width:14px; fill: ${i <= data.rating ? '#FF9800' : 'none'}; color: ${i <= data.rating ? '#FF9800' : '#ccc'}"></i>`;
+            }
+
+            const reviewHtml = `
+                <div style="background: var(--bg-color); border: 1px solid ${isApproved ? '#25D366' : 'var(--border-color)'}; padding: 15px; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-weight: bold;">${data.name}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">${new Date(data.createdAt?.toDate()).toLocaleDateString()}</div>
+                        </div>
+                        <div style="display:flex; gap:2px;">
+                            ${starsHtml}
+                        </div>
+                    </div>
+                    <p style="margin: 0 0 15px 0; font-size: 0.95rem; font-style: italic;">"${data.message}"</p>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        ${!isApproved ? `<button class="btn" style="background: #25D366; color: white; padding: 5px 10px; font-size: 0.8rem;" onclick="approveReview('${id}')">Aprobar</button>` : `<span style="color:#25D366; font-size:0.8rem; font-weight:bold; align-self:center;"><i data-lucide="check-circle" style="width:14px; vertical-align:-2px;"></i> Aprobada</span>`}
+                        <button class="btn" style="background: #E62A39; color: white; padding: 5px 10px; font-size: 0.8rem;" onclick="deleteReview('${id}')">Eliminar</button>
+                    </div>
+                </div>
+            `;
+            reviewsList.insertAdjacentHTML('beforeend', reviewHtml);
+        });
+
+        if (pendingCount > 0) {
+            badge.innerText = `${pendingCount} Pendiente${pendingCount > 1 ? 's' : ''}`;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+
+        lucide.createIcons();
+    });
+}
+
+function approveReview(id) {
+    if (confirm('¿Aprobar esta reseña para que aparezca en la web principal?')) {
+        db.collection('reviews').doc(id).update({ status: 'approved' });
+    }
+}
+
+function deleteReview(id) {
+    if (confirm('¿Estás seguro de eliminar esta reseña permanentemente?')) {
+        db.collection('reviews').doc(id).delete();
+    }
+}

@@ -321,6 +321,7 @@
             <button class="tab-btn active" onclick="switchTab('kanban')">Pedidos</button>
             <button class="tab-btn" onclick="switchTab('catalog')">Catálogo</button>
             <button class="tab-btn" onclick="switchTab('settings')">Configuración</button>
+            <button class="tab-btn" onclick="switchTab('marketing')">Marketing & Reseñas</button>
         </div>
     </header>
 
@@ -426,19 +427,6 @@
         </div>
 
         <div class="cat-section">
-            <h3 class="cat-title"><i data-lucide="users" style="display:inline; width:20px; vertical-align:-3px; margin-right:5px;"></i> Herramientas de Marketing</h3>
-            <div style="margin-top:15px;">
-                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">Extrae la lista de contactos de todos los clientes que han realizado pedidos para crear campañas o listas de difusión de WhatsApp.</p>
-                <button class="btn" style="background: #25D366; color: white; display: inline-flex; align-items: center; gap: 8px; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="openExportContactsModal()">
-                    <i data-lucide="download-cloud" style="width:18px;"></i> Exportar Lista de WhatsApps
-                </button>
-                <button class="btn" style="background: #000; color: white; display: inline-flex; align-items: center; gap: 8px; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;" onclick="printPromoTicket()">
-                    <i data-lucide="printer" style="width:18px;"></i> Imprimir Promo WhatsApp
-                </button>
-            </div>
-        </div>
-
-        <div class="cat-section">
             <h3 class="cat-title"><i data-lucide="send" style="display:inline; width:20px; vertical-align:-3px; margin-right:5px;"></i> Telegram Bot (Comprobantes)</h3>
             <div style="display:flex; gap:20px; margin-top:15px;">
                 <div class="form-group" style="flex:2;">
@@ -462,6 +450,63 @@
             <div class="form-group">
                 <label class="form-label">Texto del Aviso</label>
                 <input type="text" id="set-banner-text" class="form-control" placeholder="Ej: Demoras de 40 min por lluvia.">
+            </div>
+        </div>
+    </div>
+
+    <!-- Pestaña Marketing & Reseñas -->
+    <div id="view-marketing" class="view-container catalog-view">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <!-- Herramientas Clásicas -->
+                <div class="cat-section">
+                    <h3 class="cat-title"><i data-lucide="megaphone" style="display:inline; width:20px; vertical-align:-3px; margin-right:5px;"></i> Acciones Rápidas</h3>
+                    <div style="margin-top:15px; display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn" style="background: #25D366; color: white; display: inline-flex; align-items: center; gap: 8px; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="openExportContactsModal()">
+                            <i data-lucide="download-cloud" style="width:18px;"></i> Exportar Clientes (WhatsApp)
+                        </button>
+                        <button class="btn" style="background: #000; color: white; display: inline-flex; align-items: center; gap: 8px; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="printPromoTicket()">
+                            <i data-lucide="printer" style="width:18px;"></i> Imprimir Ticket Promo WhatsApp
+                        </button>
+                        <button class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; font-weight: 600;" onclick="generateStoreQR()">
+                            <i data-lucide="qr-code" style="width:18px;"></i> Generar QR de la Tienda
+                        </button>
+                    </div>
+                    <div id="qr-container" style="margin-top: 15px; display: none; text-align: center;">
+                        <img id="qr-image" src="" alt="QR Tienda" style="max-width: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <p style="font-size: 12px; margin-top: 10px; color: var(--text-muted);">Haz clic derecho y "Guardar imagen" para imprimirlo.</p>
+                    </div>
+                </div>
+
+                <!-- Plantillas de Redes -->
+                <div class="cat-section">
+                    <h3 class="cat-title"><i data-lucide="instagram" style="display:inline; width:20px; vertical-align:-3px; margin-right:5px;"></i> Plantillas para Redes (Copys)</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">Copia y pega estos textos en tus estados o posts.</p>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p style="margin:0; font-size: 0.95rem; font-style: italic;">"🍕 ¡Llegó el finde y el cuerpo pide Milanga! Hacé tu pedido rápido y sin vueltas desde nuestra nueva web. ¡Envío rápido y todo calentito! 🚀👇"</p>
+                            <button class="btn btn-outline" style="margin-top: 10px; font-size: 0.8rem; padding: 5px 10px;" onclick="copyTemplate(this, '🍕 ¡Llegó el finde y el cuerpo pide Milanga! Hacé tu pedido rápido y sin vueltas desde nuestra nueva web. ¡Envío rápido y todo calentito! 🚀👇')">Copiar Texto</button>
+                        </div>
+                        <div style="background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p style="margin:0; font-size: 0.95rem; font-style: italic;">"⭐ ¡Ya tenemos sistema de pedidos online! Olvidate de esperar respuestas. Entrá al link en nuestra bio, elegí tu menú y te avisamos cuando esté en camino. ¡Así de fácil! 🛵💨"</p>
+                            <button class="btn btn-outline" style="margin-top: 10px; font-size: 0.8rem; padding: 5px 10px;" onclick="copyTemplate(this, '⭐ ¡Ya tenemos sistema de pedidos online! Olvidate de esperar respuestas. Entrá al link en nuestra bio, elegí tu menú y te avisamos cuando esté en camino. ¡Así de fácil! 🛵💨')">Copiar Texto</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bandeja de Reseñas -->
+            <div class="cat-section" style="display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 class="cat-title" style="margin:0;"><i data-lucide="star" style="display:inline; width:20px; vertical-align:-3px; margin-right:5px;"></i> Moderación de Reseñas</h3>
+                    <span id="pending-reviews-badge" style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">0 Pendientes</span>
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Aprueba las reseñas para que aparezcan públicamente en la web de clientes.</p>
+                
+                <div id="reviews-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Las reseñas se inyectarán aquí -->
+                    <div style="text-align: center; color: var(--text-muted); padding: 20px;">Cargando reseñas...</div>
+                </div>
             </div>
         </div>
     </div>

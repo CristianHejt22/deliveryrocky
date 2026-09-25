@@ -1132,7 +1132,7 @@ async function requestPushToken(uid) {
 function loadPublicReviews() {
     if (typeof db === 'undefined') return;
     
-    db.collection('reviews').where('status', '==', 'approved').orderBy('createdAt', 'desc').limit(10).onSnapshot(snapshot => {
+    db.collection('reviews').where('status', '==', 'approved').onSnapshot(snapshot => {
         const container = document.getElementById('public-reviews-container');
         if (!container) return;
         
@@ -1141,9 +1141,16 @@ function loadPublicReviews() {
             return;
         }
         
+        let reviews = [];
+        snapshot.forEach(doc => reviews.push(doc.data()));
+        reviews.sort((a, b) => {
+            const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+            const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+            return timeB - timeA;
+        });
+        reviews = reviews.slice(0, 10);
         container.innerHTML = '';
-        snapshot.forEach(doc => {
-            const data = doc.data();
+        reviews.forEach(data => {
             let starsHtml = '';
             for(let i = 1; i <= 5; i++) {
                 starsHtml += `<i data-lucide="star" style="width:14px; fill: ${i <= data.rating ? '#FF9800' : 'none'}; color: ${i <= data.rating ? '#FF9800' : '#ccc'}"></i>`;
@@ -1372,8 +1379,7 @@ function loadProductReviews(productId) {
     db.collection('reviews')
       .where('productId', '==', productId)
       .where('status', '==', 'approved')
-      .orderBy('createdAt', 'desc')
-      .limit(5)
+      
       .get().then(snapshot => {
         
         if (snapshot.empty) {
@@ -1381,9 +1387,16 @@ function loadProductReviews(productId) {
             return;
         }
         
+        let reviews = [];
+        snapshot.forEach(doc => reviews.push(doc.data()));
+        reviews.sort((a, b) => {
+            const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+            const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+            return timeB - timeA;
+        });
+        reviews = reviews.slice(0, 10);
         container.innerHTML = '';
-        snapshot.forEach(doc => {
-            const data = doc.data();
+        reviews.forEach(data => {
             let starsHtml = '';
             for(let i = 1; i <= 5; i++) {
                 starsHtml += `<i data-lucide="star" style="width:14px; fill: ${i <= data.rating ? '#FF9800' : 'none'}; color: ${i <= data.rating ? '#FF9800' : '#ccc'}"></i>`;
@@ -1406,3 +1419,6 @@ function loadProductReviews(productId) {
         container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">Error al cargar reseñas.</div>';
     });
 }
+
+
+

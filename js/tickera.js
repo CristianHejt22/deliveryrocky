@@ -104,3 +104,39 @@ function printTicket(orderId) {
         setTimeout(() => window.print(), 150);
     }
 }
+
+function printPromoTicket() {
+    const printArea = document.getElementById('ticket-print-area');
+    
+    const promoHtml = `
+        <div class="ticket" style="text-align: center; padding-top: 20px; padding-bottom: 20px;">
+            <img src="img/logo.png" alt="Punto Milanga" style="max-width: 180px; height: auto; filter: grayscale(100%) contrast(300%) brightness(0%); margin: 0 auto 20px auto; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+            
+            <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">¡Haz tu pedido por WhatsApp!</div>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 22px; font-weight: 900; margin-top: 15px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+                2915658321
+            </div>
+            
+            <div class="ticket-divider" style="margin-top: 25px;"></div>
+            <p style="font-size: 12px; font-weight: bold; margin-top: 10px;">¡Gracias por preferir Punto Milanga!</p>
+        </div>
+    `;
+
+    printArea.innerHTML = promoHtml;
+
+    const logoImg = printArea.querySelector('img');
+    if (logoImg) {
+        if (logoImg.complete) {
+            setTimeout(() => window.print(), 100);
+        } else {
+            logoImg.onload = () => setTimeout(() => window.print(), 100);
+            logoImg.onerror = () => setTimeout(() => window.print(), 100);
+        }
+    } else {
+        setTimeout(() => window.print(), 150);
+    }
+}

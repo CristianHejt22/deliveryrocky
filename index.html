@@ -393,13 +393,16 @@
                 <!-- Generado por JS -->
             </div>
 
-            <!-- Botón Añadir -->
-            <button id="product-page-add-btn" class="checkout-btn" style="width: 100%; margin-bottom: 40px; padding: 15px; font-size: 1.1rem;">
-                Añadir al Carrito
-            </button>
+            <!-- Botón Añadir Fijo -->
+            <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px 20px; background: var(--bg-color); border-top: 1px solid var(--border-color); z-index: 20; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); display: flex; justify-content: center;">
+                <button id="product-page-add-btn" class="checkout-btn" style="width: 100%; max-width: 500px; padding: 16px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; border-radius: 12px;">
+                    <span style="font-weight: 600;">Añadir al Carrito</span>
+                    <span id="product-page-total-btn" style="font-weight: 900; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px;">$0</span>
+                </button>
+            </div>
 
             <!-- Sección de Reseñas del Producto -->
-            <div style="border-top: 1px solid var(--border-color); padding-top: 30px; padding-bottom: 50px;">
+            <div style="border-top: 1px solid var(--border-color); padding-top: 30px; padding-bottom: 120px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="margin: 0; font-size: 1.2rem;"><i data-lucide="star" style="width:18px; color:var(--primary); vertical-align:-2px;"></i> Reseñas del producto</h3>
                     <button onclick="openProductReviewModal()" style="background: none; border: none; color: var(--primary); font-weight: bold; cursor: pointer; font-size: 0.9rem;">

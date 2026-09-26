@@ -1317,7 +1317,7 @@ function openProductPage(id) {
                 groupHtml += `
                     <label style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border-color); cursor:pointer;">
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <input type="${inputType}" name="${inputName}" value="${opt.name}" data-price="${opt.price}" style="width:18px; height:18px;">
+                            <input type="${inputType}" name="${inputName}" value="${opt.name}" data-price="${opt.price}" style="width:18px; height:18px;" onchange="updateProductPageTotal(${product.price})">
                             <span>${opt.name}</span>
                         </div>
                         <span style="color:var(--text-muted); font-size:0.9rem;">${opt.price > 0 ? '+'+formatPrice(opt.price) : ''}</span>
@@ -1338,12 +1338,30 @@ function openProductPage(id) {
 
     loadProductReviews(id);
 
+    updateProductPageTotal(product.price);
+
     document.getElementById('product-page-overlay').style.display = 'flex';
     lucide.createIcons();
 }
 
 function closeProductPage() {
     document.getElementById('product-page-overlay').style.display = 'none';
+}
+
+function updateProductPageTotal(basePrice) {
+    let total = basePrice;
+    const optionsContainer = document.getElementById('product-page-options');
+    if (optionsContainer) {
+        const checkedInputs = optionsContainer.querySelectorAll('input:checked');
+        checkedInputs.forEach(input => {
+            const extraPrice = parseFloat(input.getAttribute('data-price')) || 0;
+            total += extraPrice;
+        });
+    }
+    const totalBtn = document.getElementById('product-page-total-btn');
+    if (totalBtn) {
+        totalBtn.innerText = formatPrice(total);
+    }
 }
 
 function submitProductPageForm(product) {
@@ -1419,6 +1437,7 @@ function loadProductReviews(productId) {
         container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">Error al cargar reseñas.</div>';
     });
 }
+
 
 
 

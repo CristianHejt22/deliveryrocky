@@ -363,7 +363,7 @@ main {
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: 1000;
+  z-index: 10001;
   display: flex;
   justify-content: center;
   align-items: flex-end; /* Mobile friendly bottom sheet */
@@ -932,3 +932,4 @@ main {
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
 }
+
